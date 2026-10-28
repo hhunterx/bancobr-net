@@ -1,6 +1,6 @@
 # Enviar e acompanhar pagamentos
 
-Você pode usar o BancoBr.NET como já usa hoje ou escolher as chamadas detalhadas para receber mais informações. As duas formas funcionam com Sicoob, Santander, Banco do Brasil e Sicredi, respeitando as operações disponíveis em cada banco.
+Você pode usar o BancoBr.NET como já usa hoje ou escolher as chamadas detalhadas para receber mais informações. As duas formas funcionam com Sicoob, Santander, Banco do Brasil, Sicredi e Bradesco, respeitando as operações disponíveis em cada banco.
 
 ## Para quem já usa a biblioteca
 
@@ -38,6 +38,8 @@ var movimento = new Movimento
 Use os dados completos do pagamento. A biblioteca fará as consultas prévias que o banco exigir durante o envio.
 
 O exemplo usa `NumeroDocumento` numérico para funcionar também no BB. Nesse banco, o número deve estar entre 1 e 9999999, ser diferente para cada nova solicitação e permanecer igual nas tentativas do mesmo pagamento.
+
+No Bradesco, consulte os [limites de identidade e modalidades](../src/BancoBr.API/Bradesco/README.md): boleto aceita `NumeroDocumento` numérico positivo de até 9 dígitos; contas e tributos aceitam até 9 caracteres; TED, até 25; Pix, até 35. Preserve esse número nos reenvios.
 
 ### Enviar pela forma que você já conhece
 

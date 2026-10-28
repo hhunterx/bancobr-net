@@ -72,6 +72,8 @@ namespace BancoBr.API
 
             switch (banco)
             {
+                case BancoEnum.BradescoSA:
+                    return ConectarBradesco(configuracao, tokenEndpointOverride, null);
                 case BancoEnum.Sicredi:
                     return ConectarSicredi(configuracao, tokenEndpointOverride, null);
                 case BancoEnum.BancoDoBrasil:
@@ -117,6 +119,8 @@ namespace BancoBr.API
 
             switch (banco)
             {
+                case BancoEnum.BradescoSA:
+                    return ConectarBradesco(configuracao, null, tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider)));
                 case BancoEnum.Sicredi:
                     return ConectarSicredi(configuracao, null, tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider)));
                 case BancoEnum.BancoDoBrasil:
@@ -144,6 +148,40 @@ namespace BancoBr.API
                 default:
                     throw new Exception($"Banco não implementado: {configuracao.Correntista.Banco}!");
             }
+        }
+
+        internal static BancoApi ConectarBradesco(ConfiguracaoAPI config, Uri endpoint, IAccessTokenProvider tokens, HttpClient httpClient = null)
+        {
+            if (config.Correntista == null || config.Correntista.Banco != (int)BancoEnum.BradescoSA)
+                throw new ArgumentException("Informe a conta Bradesco (237) na configuração.", nameof(config));
+            if (config.CertificadoDigital == null && httpClient == null)
+                throw new ArgumentException("Informe o certificado mTLS Bradesco.", nameof(config));
+            HttpClient http = httpClient;
+            if (http == null)
+            {
+                var handler = new HttpClientHandler();
+                handler.ClientCertificates.Add(config.CertificadoDigital.GetCertificate());
+                http = new HttpClient(handler);
+            }
+            var raiz = config.AmbienteHomologacao ? "https://openapisandbox.prebanco.com.br/" : "https://openapi.bradesco.com.br/";
+            var raizPix = config.AmbienteHomologacao ? raiz : "https://qrpix.bradesco.com.br/";
+            var tokenGeral = tokens ?? new OAuthTokenProvider(http, new OAuthTokenProviderOptions
+            {
+                TokenEndpoint = endpoint ?? new Uri(raiz + "auth/server-mtls/v2/token"),
+                ClientId = config.ClientId, ClientSecret = config.ClientSecret
+            });
+            var tokenPix = tokens ?? new OAuthTokenProvider(http, new OAuthTokenProviderOptions
+            {
+                TokenEndpoint = endpoint ?? new Uri(raizPix + "auth/server/oauth/token"),
+                ClientId = config.ClientId, ClientSecret = config.ClientSecret
+            });
+            var gateway = new Bradesco.BradescoHttpGateway(http, tokenGeral, config.Correntista, config.AmbienteHomologacao);
+            var pix = new Bradesco.BradescoHttpGateway(http, tokenPix, config.Correntista, config.AmbienteHomologacao, true);
+            var pagamentos = new Bradesco.PagamentosClient(gateway, pix);
+            var conta = new Bradesco.ExtratoClient(gateway);
+            return new BancoApi(config.Correntista, new Bradesco.PagamentoBoletoClient(pagamentos), new Bradesco.PagamentoConvenioClient(pagamentos),
+                new Bradesco.PagamentoPixClient(pagamentos), new Bradesco.PagamentoTedClient(pagamentos), conta,
+                saldo: conta, pagamentoDireto: pagamentos);
         }
 
         internal static BancoApi ConectarSicredi(ConfiguracaoAPI config, Uri endpoint, IAccessTokenProvider tokens, HttpClient httpClient = null)
@@ -246,6 +284,7 @@ namespace BancoBr.API
             => Requer(_workspace).ObterOuCriarWorkspaceAsync(cancellationToken);
 
         /// <summary>
+        /// No Bradesco, informe NumeroDocumento estável nos limites de cada modalidade; o envio preserva as etapas bancárias de validação e prévia.
         /// No Sicredi, o envio é direto, sem consulta prévia: informe data, valor e NumeroDocumento.
         /// Preserve idempotencyKey nos reenvios; a aceitação ainda depende de processamento/aprovação.
         /// Envia o movimento — consulta prévia (quando o banco exige) + pagamento, na mesma
@@ -360,6 +399,7 @@ namespace BancoBr.API
         }
 
         /// <summary>
+        /// No Bradesco, somente exclusão de agendamento de boleto está documentada.
         /// No Sicredi, cancela boleto, tributo com barras ou Pix agendado pelo idTransacao.
         /// Cancela o agendamento do movimento. Só Boleto e TED têm cancelamento na API do
         /// Sicoob — para Pix e Convênio, lança <see cref="NotSupportedException"/>.

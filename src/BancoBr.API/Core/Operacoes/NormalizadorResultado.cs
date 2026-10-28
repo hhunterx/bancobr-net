@@ -30,6 +30,7 @@ namespace BancoBr.API.Core.Operacoes
                     ?? Texto(dados, "situacaoPagamento") ?? Texto(dados, "situacao");
                 if (original != null) break;
             }
+            if (referencia.Banco == (int)BancoEnum.BradescoSA) original = MetadadosOperacao.De(movimento).SituacaoOriginal;
             if (original == null) original = MetadadosOperacao.De(movimento).SituacaoOriginal;
             var situacao = SituacaoPagamento.Desconhecida;
             switch (movimento.SituacaoBancoBr)
@@ -57,6 +58,13 @@ namespace BancoBr.API.Core.Operacoes
                     situacao = SituacaoPagamento.Efetivado; break;
                 case "REFUNDED": case "DEVOLVIDO": situacao = SituacaoPagamento.Devolvido; break;
             }
+            if (referencia.Banco == (int)BancoEnum.BradescoSA &&
+                referencia.Modalidade == ModalidadePagamento.Convenio && (original == "07" || original == "08"))
+                situacao = SituacaoPagamento.EmProcessamento;
+            if (referencia.Banco == (int)BancoEnum.BradescoSA &&
+                ((referencia.Modalidade == ModalidadePagamento.Boleto && (original == "3" || original == "9")) ||
+                 (referencia.Modalidade == ModalidadePagamento.Ted && original == "DEVOLVIDA")))
+                situacao = SituacaoPagamento.Devolvido;
             // HTTP 202 da arrecadação Sicoob informa pendência de assinatura (mesma evidência usada pelo cliente antigo).
             if (referencia.Banco == (int)BancoEnum.Sicoob && (referencia.Modalidade == ModalidadePagamento.Convenio || referencia.Modalidade == ModalidadePagamento.Boleto) && ultimo?.HttpStatusCode == 202)
             {

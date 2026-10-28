@@ -182,7 +182,7 @@ foreach (var movimento in cnab.Movimentos) {
 - [X] Santander
 - [x] [Sicredi](src/BancoBr.API/Sicredi/README.md) — pagamentos, DDA, extrato e saldo; homologação pendente de credenciais
 - [ ] Itaú
-- [ ] Bradesco
+- [x] [Bradesco](src/BancoBr.API/Bradesco/README.md) — boletos, contas e tributos, Pix, TED, saldo e extrato; saldo e extrato testados no sandbox, pagamentos com homologação pendente
 - [ ] CEF
 - [x] [Banco do Brasil](src/BancoBr.API/BancoDoBrasil/README.md) — **em testes**
 
@@ -190,7 +190,7 @@ foreach (var movimento in cnab.Movimentos) {
 
 Você pode continuar usando os métodos e modelos atuais. Se precisar saber se falta autorização, salvar uma referência para consultar depois ou receber mais dados do banco, veja o [guia das chamadas detalhadas](docs/operacoes-api.md).
 
-Essa forma de uso é opcional e está disponível para Sicoob, Santander, Banco do Brasil e Sicredi, conforme as operações de cada integração.
+Essa forma de uso é opcional e está disponível para Sicoob, Santander, Banco do Brasil, Sicredi e Bradesco, conforme as operações de cada integração.
 
 ## Exemplos API
 
