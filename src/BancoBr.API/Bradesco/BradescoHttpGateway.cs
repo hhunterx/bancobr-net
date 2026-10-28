@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using BancoBr.API.Core.Errors;
 using BancoBr.API.Core.OAuth;
-using BancoBr.API.Core.Operacoes;
 using BancoBr.Common.Instances;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -60,7 +59,7 @@ namespace BancoBr.API.Bradesco
                             if (response.IsSuccessStatusCode) throw;
                             throw Erro(((int)response.StatusCode).ToString(), response.ReasonPhrase, (int)response.StatusCode);
                         }
-                        CapturaRetorno.Registrar(content, (int)response.StatusCode);
+
                         if (!response.IsSuccessStatusCode)
                             throw Erro((string)result["codigo"] ?? (string)result["code"] ?? (string)result["type"] ?? ((int)response.StatusCode).ToString(),
                                 (string)result["detail"] ?? (string)result["mensagem"] ?? (string)result["title"] ?? response.ReasonPhrase, (int)response.StatusCode);

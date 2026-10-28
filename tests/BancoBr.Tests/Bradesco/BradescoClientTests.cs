@@ -3,7 +3,6 @@ using BancoBr.API;
 using BancoBr.API.Base.Models;
 using BancoBr.API.Core.Errors;
 using BancoBr.API.Core.OAuth;
-using BancoBr.API.Operacoes;
 using BancoBr.Common.Enums;
 using BancoBr.Common.Instances;
 using BancoBr.Tests.Sicoob;
@@ -37,10 +36,9 @@ namespace BancoBr.Tests.Bradesco
             var h = Respostas(Validacao, "{\"status\":200,\"valorCobrado\":150}", "{\"status\":200,\"nroProtocolo\":123}", "{\"status\":200,\"situacaoPagamento\":7}", "{\"status\":200}");
             var banco = Conectar(h);
             var m = Movimento(new MovimentoItemPagamentoTituloCodigoBarra { CodigoBarras = new string('0', 44) });
-            var resultado = await banco.EnviarPagamentoAsync(new RequisicaoPagamento { IdOperacao = Guid.NewGuid(), Movimento = m });
-            Assert.Equal(SituacaoPagamento.EmProcessamento, resultado.Situacao);
-            Assert.Equal(SituacaoAutorizacao.NaoInformada, resultado.Autorizacao);
-            Assert.Equal(3, resultado.RetornosBanco.Count);
+            var resultado = await banco.EnviarAgendamentoAsync(m);
+            Assert.Same(m, resultado);
+            Assert.Null(resultado.SituacaoBancoBr);
             Assert.Equal("123456", m.NumeroDocumentoNoBanco);
             Assert.EndsWith("cobranca-efetivacao/solicitacao/executar", h.Requests[2].RequestUri!.AbsolutePath);
             var body = JObject.Parse(h.Bodies[2]!);
@@ -48,11 +46,13 @@ namespace BancoBr.Tests.Bradesco
             Assert.Equal(1234, (int)body["agenciaDebito"]!);
             Assert.Equal(12345, (int)body["contaDebito"]!);
             Assert.Equal("controle", (string)body["numeroCtrlCip"]!);
-            var referencia = JsonConvert.DeserializeObject<ReferenciaPagamento>(JsonConvert.SerializeObject(resultado.Referencia))!;
-            var consultado = await banco.ConsultarPagamentoAsync(referencia);
-            Assert.Equal(SituacaoPagamento.Agendado, consultado.Situacao);
+            var salvo = JsonConvert.SerializeObject(m);
+            var consultado = JsonConvert.DeserializeObject<Movimento>(salvo)!;
+            consultado.MovimentoItem = new MovimentoItemPagamentoTituloCodigoBarra();
+            await banco.ConsultarAgendamentoAsync(consultado);
+            Assert.Equal(BancoBrSituacaoEnum.Agendado, consultado.SituacaoBancoBr);
             Assert.Equal(123456, (long)JObject.Parse(h.Bodies[3]!)["transactionId"]!);
-            await banco.CancelarPagamentoAsync(consultado.Referencia);
+            await banco.CancelarAgendamentoAsync(consultado);
             Assert.Equal(2, (int)JObject.Parse(h.Bodies[4]!)["versao"]!);
             Assert.All(h.Requests, r => Assert.Equal("token-ficticio", r.Headers.Authorization!.Parameter));
         }
@@ -129,32 +129,28 @@ namespace BancoBr.Tests.Bradesco
         }
 
         [Theory]
-        [InlineData("01", BancoBrSituacaoEnum.Agendado, SituacaoPagamento.Agendado)]
-        [InlineData("02", BancoBrSituacaoEnum.Agendado, SituacaoPagamento.Agendado)]
-        [InlineData("04", BancoBrSituacaoEnum.Efetivado, SituacaoPagamento.Efetivado)]
-        [InlineData("06", BancoBrSituacaoEnum.Efetivado, SituacaoPagamento.Efetivado)]
-        [InlineData("09", BancoBrSituacaoEnum.Efetivado, SituacaoPagamento.Efetivado)]
-        [InlineData("05", BancoBrSituacaoEnum.Rejeitado, SituacaoPagamento.Rejeitado)]
-        [InlineData("00", BancoBrSituacaoEnum.Rejeitado, SituacaoPagamento.Rejeitado)]
-        [InlineData("07", null, SituacaoPagamento.EmProcessamento)]
-        [InlineData("08", null, SituacaoPagamento.EmProcessamento)]
-        [InlineData("99", null, SituacaoPagamento.Desconhecida)]
-        [InlineData(null, null, SituacaoPagamento.Desconhecida)]
-        public async Task Convenio_AutenticacaoPresente_RespeitaSituacaoDoBanco(string? situacao, BancoBrSituacaoEnum? antiga, SituacaoPagamento detalhada)
+        [InlineData("01", BancoBrSituacaoEnum.Agendado)]
+        [InlineData("02", BancoBrSituacaoEnum.Agendado)]
+        [InlineData("04", BancoBrSituacaoEnum.Efetivado)]
+        [InlineData("06", BancoBrSituacaoEnum.Efetivado)]
+        [InlineData("09", BancoBrSituacaoEnum.Efetivado)]
+        [InlineData("05", BancoBrSituacaoEnum.Rejeitado)]
+        [InlineData("00", BancoBrSituacaoEnum.Rejeitado)]
+        [InlineData("07", null)]
+        [InlineData("08", null)]
+        [InlineData("99", null)]
+        [InlineData(null, null)]
+        public async Task Convenio_AutenticacaoPresente_RespeitaSituacaoDoBanco(string? situacao, BancoBrSituacaoEnum? esperada)
         {
             var dados = new JObject { ["valorDebito"] = 150, ["autenticacaoBancaria"] = 12345, ["situacaoConta"] = situacao };
             var resposta = new JObject { ["retorno"] = "000", ["regSaida"] = new JArray(dados) }.ToString();
             var h = Respostas(resposta, resposta, resposta);
             var banco = Conectar(h);
             var m = Movimento(new MovimentoItemPagamentoConvenioCodigoBarra { CodigoBarra = "8" + new string('0', 43) });
-            var envio = await banco.EnviarPagamentoAsync(new RequisicaoPagamento { IdOperacao = Guid.NewGuid(), Movimento = m });
-            Assert.Equal(antiga, envio.Movimento.SituacaoBancoBr);
-            Assert.Equal(detalhada, envio.Situacao);
-            Assert.Equal(situacao, envio.SituacaoOriginal);
-            var consulta = await banco.ConsultarPagamentoAsync(envio.Referencia);
-            Assert.Equal(antiga, consulta.Movimento.SituacaoBancoBr);
-            Assert.Equal(detalhada, consulta.Situacao);
-            Assert.Equal(situacao, consulta.SituacaoOriginal);
+            var envio = await banco.EnviarAgendamentoAsync(m);
+            Assert.Equal(esperada, envio.SituacaoBancoBr);
+            var consulta = await banco.ConsultarAgendamentoAsync(envio);
+            Assert.Equal(esperada, consulta.SituacaoBancoBr);
         }
 
         [Theory]
@@ -218,13 +214,11 @@ namespace BancoBr.Tests.Bradesco
         }
 
         [Fact]
-        public async Task Extrato_MapeiaHistoricoESaldoPorLancamento_IgnoraSaldosEFuturos()
+        public async Task Extrato_MapeiaHistorico_IgnoraSaldosEFuturos()
         {
             var h = Respostas("{\"extratoPorPeriodo\":{\"codigoRetorno\":\"00\",\"lstLancamentoMensal\":[{\"tipoLancamento\":\"01\"},{\"tipoLancamento\":\"04\"},{\"tipoLancamento\":\"02\",\"dataLancamento\":\"01/10/2026\",\"sinalLancamento\":\"-\",\"valorLancamento\":\"1.234,56\",\"valorSaldoAposLancamento\":\"10,00\",\"sinalSaldo\":\"-\",\"descritivoLancamentoCompleto\":\"Pagamento\",\"numeroDocumento\":\"123\"}]}}" );
-            var r = await Conectar(h).ConsultarExtratoDetalhadoAsync(new RequisicaoExtrato { NumeroContaCorrente = 12345, Mes = 10, Ano = 2026 });
-            var lancamento = Assert.Single(r.Lancamentos);
-            Assert.Equal(-10m, lancamento.SaldoAposLancamento);
-            var item = Assert.IsType<MovimentoItemExtratoTransacao>(lancamento.Movimento.MovimentoItem);
+            var r = await Conectar(h).ConsultarExtratoAsync(12345, 10, 2026);
+            var item = Assert.IsType<MovimentoItemExtratoTransacao>(Assert.Single(r).MovimentoItem);
             Assert.Equal(1234.56m, item.Valor);
             Assert.Equal(BancoBrTipoCreditoDebitoEnum.Debito, item.Tipo);
             Assert.Contains("dataInicio=01102026&dataFim=31102026", h.Requests[0].RequestUri!.Query);
@@ -251,7 +245,7 @@ namespace BancoBr.Tests.Bradesco
         }
 
         [Fact]
-        public async Task Autenticacao_UsaEndpointsDistintos_ExcluiTokensDosDiagnosticos()
+        public async Task Autenticacao_UsaEndpointsETokensDistintos()
         {
             var h = Respostas("{\"access_token\":\"geral-ficticio\",\"expires_in\":3600}",
                 "{\"saldoCC\":{\"codigoRetorno\":\"00\",\"lstLancamentosSaldos\":[{\"codigoProduto\":998,\"valorLancamento\":\"1,00\",\"sinalSaldo\":\"+\"}]}}",
@@ -264,7 +258,7 @@ namespace BancoBr.Tests.Bradesco
             var m = Movimento(new MovimentoItemTransferenciaPIX { TipoChavePIX = FormaIniciacaoEnum.PIX_Email, ChavePIX = "teste@example.com" });
             m.NumeroDocumento = null;
             var id = Guid.NewGuid();
-            var r = await banco.EnviarPagamentoAsync(new RequisicaoPagamento { IdOperacao = id, Movimento = m });
+            await banco.EnviarAgendamentoAsync(m, id.ToString());
             Assert.Equal("https://openapi.bradesco.com.br/auth/server-mtls/v2/token", h.Requests[0].RequestUri!.AbsoluteUri);
             Assert.Equal("https://qrpix.bradesco.com.br/auth/server/oauth/token", h.Requests[2].RequestUri!.AbsoluteUri);
             Assert.Contains("grant_type=client_credentials", h.Bodies[0]);
@@ -272,8 +266,6 @@ namespace BancoBr.Tests.Bradesco
             Assert.Equal("geral-ficticio", h.Requests[1].Headers.Authorization!.Parameter);
             Assert.Equal("pix-ficticio", h.Requests[3].Headers.Authorization!.Parameter);
             Assert.Equal(id.ToString("N"), (string)JObject.Parse(h.Bodies[3]!)["idtransacao"]!);
-            Assert.Single(r.RetornosBanco);
-            Assert.DoesNotContain("access_token", r.RetornosBanco[0].Corpo);
         }
 
         [Fact]
@@ -290,14 +282,16 @@ namespace BancoBr.Tests.Bradesco
         }
 
         [Fact]
-        public async Task Pix_ReferenciaPersistida_ConsultaSemReexecutar()
+        public async Task Pix_MovimentoPersistido_ConsultaSemReexecutar()
         {
             var h = Respostas("{\"status\":\"EM_PROCESSAMENTO\"}", "{\"status\":\"CONCLUIDO\"}");
             var banco = Conectar(h);
-            var r = await banco.EnviarPagamentoAsync(new RequisicaoPagamento { IdOperacao = Guid.NewGuid(), Movimento = Movimento(new MovimentoItemTransferenciaPIX { TipoChavePIX = FormaIniciacaoEnum.PIX_Email, ChavePIX = "teste@example.com" }) });
-            var referencia = JsonConvert.DeserializeObject<ReferenciaPagamento>(JsonConvert.SerializeObject(r.Referencia))!;
-            var consulta = await banco.ConsultarPagamentoAsync(referencia);
-            Assert.Equal(SituacaoPagamento.Efetivado, consulta.Situacao);
+            var r = await banco.EnviarAgendamentoAsync(Movimento(new MovimentoItemTransferenciaPIX { TipoChavePIX = FormaIniciacaoEnum.PIX_Email, ChavePIX = "teste@example.com" }));
+            var salvo = JsonConvert.SerializeObject(r);
+            var consulta = JsonConvert.DeserializeObject<Movimento>(salvo)!;
+            consulta.MovimentoItem = new MovimentoItemTransferenciaPIX();
+            await banco.ConsultarAgendamentoAsync(consulta);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, consulta.SituacaoBancoBr);
             Assert.EndsWith("/consulta/transferencia/123456", h.Requests[1].RequestUri!.AbsolutePath);
         }
 

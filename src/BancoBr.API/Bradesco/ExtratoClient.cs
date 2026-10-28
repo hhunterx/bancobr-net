@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using BancoBr.API.Base;
-using BancoBr.API.Core.Operacoes;
 using BancoBr.Common.Enums;
 using BancoBr.Common.Instances;
 using Newtonsoft.Json;
@@ -77,8 +76,7 @@ namespace BancoBr.API.Bradesco
                         Valor = Math.Abs(Valor(item["valorLancamento"])),
                         Tipo = sinal == "-" ? BancoBrTipoCreditoDebitoEnum.Debito : BancoBrTipoCreditoDebitoEnum.Credito
                     };
-                    if (item["valorSaldoAposLancamento"] != null)
-                        MetadadosOperacao.De(transacao).SaldoAposLancamento = Valor(item["valorSaldoAposLancamento"], (string)item["sinalSaldo"]);
+
                     movimentos.Add(new Movimento { MovimentoItem = transacao });
                 }
             }

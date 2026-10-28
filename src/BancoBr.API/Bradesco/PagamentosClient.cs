@@ -1,11 +1,11 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using BancoBr.API.Base;
-using BancoBr.API.Core.Operacoes;
 using BancoBr.Common.Enums;
 using BancoBr.Common.Instances;
 using Newtonsoft.Json;
@@ -16,6 +16,8 @@ namespace BancoBr.API.Bradesco
     /// <summary>Fluxos de pagamento conforme os manuais públicos Bradesco. Nunca repete uma execução automaticamente.</summary>
     internal sealed class PagamentosClient : IPagamentoDiretoApi
     {
+        private static readonly ConditionalWeakTable<Movimento, StrongBox<string>> Identidades = new ConditionalWeakTable<Movimento, StrongBox<string>>();
+        private static StrongBox<string> IdentidadeSalva(Movimento movimento) => Identidades.GetValue(movimento, _ => new StrongBox<string>());
         internal BradescoHttpGateway Gateway { get; }
         private readonly BradescoHttpGateway _pix;
         private Correntista Origem => Gateway.Origem;
@@ -29,15 +31,15 @@ namespace BancoBr.API.Bradesco
         private string Identidade(Movimento m, string chave, int limite, bool numerica)
         {
             // NumeroDocumento é a identidade bancária explícita para protocolos menores que um UUID.
-            var valor = m.NumeroDocumento ?? chave ?? MetadadosOperacao.De(m).IdentidadeConsulta;
+            var valor = m.NumeroDocumento ?? chave ?? IdentidadeSalva(m).Value;
             if (limite == 35 && Guid.TryParse(valor, out var guid)) valor = guid.ToString("N");
             if (string.IsNullOrWhiteSpace(valor) && !numerica) valor = Guid.NewGuid().ToString("N");
             if (string.IsNullOrWhiteSpace(valor) || valor.Length > limite || (numerica && (!valor.All(c => c >= '0' && c <= '9') || long.Parse(valor, CultureInfo.InvariantCulture) == 0)))
                 throw new ArgumentException("Informe NumeroDocumento único e estável, " + (numerica ? "numérico positivo " : "") + "com até " + limite + " caracteres para esta operação Bradesco.");
-            var meta = MetadadosOperacao.De(m);
-            if (meta.IdentidadeConsulta != null && meta.IdentidadeConsulta != valor)
+            var identidadeSalva = IdentidadeSalva(m);
+            if (identidadeSalva.Value != null && identidadeSalva.Value != valor)
                 throw new ArgumentException("Preserve NumeroDocumento e a identidade bancária entre tentativas.");
-            meta.IdentidadeConsulta = valor;
+            identidadeSalva.Value = valor;
             return valor;
         }
 
@@ -111,7 +113,7 @@ namespace BancoBr.API.Bradesco
                     if (string.IsNullOrWhiteSpace(bancoId) || bancoId.Length < 7) throw new JsonSerializationException("TED sem chaveUnicaParaApi válida; reconcilie antes de reenviar.");
                     m.NumeroDocumentoNoBanco = bancoId;
                     m.SituacaoBancoBr = null;
-                    MetadadosOperacao.De(m).SituacaoOriginal = "EM_PROCESSAMENTO";
+
                     return m;
                 default: throw new NotSupportedException("Modalidade não documentada nas APIs públicas Bradesco (incluindo Pix QR Code).");
             }
@@ -166,19 +168,19 @@ namespace BancoBr.API.Bradesco
             body.Remove("agencia");
             body["codigoAgencia"] = Origem.NumeroAgencia;
             body["indicadorFuncao"] = "1";
-            body["transactionId"] = long.Parse(MetadadosOperacao.De(m).IdentidadeConsulta, CultureInfo.InvariantCulture);
+            body["transactionId"] = long.Parse(IdentidadeSalva(m).Value, CultureInfo.InvariantCulture);
             body["tipoIntermediador"] = "";
             var partes = PartesDocumento(Documento(Origem.CPF_CNPJ));
             body["cnpjCpfPtdor"] = long.Parse(partes[0], CultureInfo.InvariantCulture);
             body["filialCnpjPtdor"] = int.Parse(partes[1], CultureInfo.InvariantCulture);
             body["ctrlCnpjPtdor"] = int.Parse(partes[2], CultureInfo.InvariantCulture);
             var r = await Gateway.JsonAsync(HttpMethod.Post, Boleto + "cobranca-efetivacao/solicitacao/executar", body, ct).ConfigureAwait(false);
-            m.NumeroDocumentoNoBanco = MetadadosOperacao.De(m).IdentidadeConsulta;
+            m.NumeroDocumentoNoBanco = IdentidadeSalva(m).Value;
             var protocolo = (string)r["nroProtocolo"];
             ((MovimentoItemPagamentoTituloCodigoBarra)m.MovimentoItem).NumeroAutenticacaoPagamento = protocolo == "0" ? null : protocolo;
             // O exemplo oficial de efetivação ecoa a prévia. Confirmação de liquidação somente pela consulta de situação.
             m.SituacaoBancoBr = null;
-            MetadadosOperacao.De(m).SituacaoOriginal = "EM_PROCESSAMENTO";
+
             return m;
         }
 
@@ -187,7 +189,7 @@ namespace BancoBr.API.Bradesco
             var item = (MovimentoItemPagamentoConvenioCodigoBarra)m.MovimentoItem;
             var codigo = Digitos(item.CodigoBarra);
             if (codigo.Length != 44 || !codigo.StartsWith("8", StringComparison.Ordinal)) throw new ArgumentException("Bradesco exige código de arrecadação de 44 dígitos iniciado por 8.");
-            var id = MetadadosOperacao.De(m).IdentidadeConsulta ?? Identidade(m, null, 9, false);
+            var id = IdentidadeSalva(m).Value ?? Identidade(m, null, 9, false);
             var r = await Gateway.JsonAsync(HttpMethod.Post, Convenio + "pagamentoContaConsumo", new JObject
             {
                 ["agencia"] = Origem.NumeroAgencia, ["conta"] = Origem.NumeroConta,
@@ -215,7 +217,7 @@ namespace BancoBr.API.Bradesco
                         ["numeroConta"] = Origem.NumeroConta, ["numeroProtocolo"] = 0, ["dataPagamento"] = 0, ["transactionId"] = id
                     }, ct).ConfigureAwait(false);
                     var estado = r.Value<int?>("situacaoPagamento");
-                    MetadadosOperacao.De(m).SituacaoOriginal = estado?.ToString(CultureInfo.InvariantCulture);
+
                     m.SituacaoBancoBr = estado == 1 || estado == 11 ? BancoBrSituacaoEnum.Efetivado : estado == 7 ? BancoBrSituacaoEnum.Agendado
                         : estado == 2 || estado == 8 ? BancoBrSituacaoEnum.Cancelado : estado == 3 || estado == 9 || estado == 12 ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
                     m.DetalheRejeicaoBancoBr = (string)r["descrMotivo"];
@@ -228,7 +230,7 @@ namespace BancoBr.API.Bradesco
                     if (m.NumeroDocumentoNoBanco.Length < 7 || !long.TryParse(m.NumeroDocumentoNoBanco.Substring(0, 7), out var numero)) throw new ArgumentException("Chave TED Bradesco inválida.");
                     var ted = await Gateway.JsonAsync(HttpMethod.Post, "transferencia/ted/v1/consulta", new JObject { ["numeroDocumento"] = numero, ["dataOperacao"] = m.DataPagamento.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) }, ct).ConfigureAwait(false);
                     var status = (string)ted["statusMensagem"];
-                    MetadadosOperacao.De(m).SituacaoOriginal = status;
+
                     m.SituacaoBancoBr = status == "DEVOLVIDA" ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
                     m.DetalheRejeicaoBancoBr = (string)ted["descricaoDaDevolucao"];
                     return m;
@@ -251,14 +253,14 @@ namespace BancoBr.API.Bradesco
             }, ct).ConfigureAwait(false);
             if (cancelamento.Value<int?>("status") != 200) throw new JsonSerializationException("Cancelamento sem confirmação de sucesso.");
             m.SituacaoBancoBr = BancoBrSituacaoEnum.Cancelado;
-            MetadadosOperacao.De(m).SituacaoOriginal = "CANCELADO";
+
             return m;
         }
 
         private static void AplicarPix(Movimento m, JObject r)
         {
             var status = (string)r["status"];
-            MetadadosOperacao.De(m).SituacaoOriginal = status;
+
             m.SituacaoBancoBr = status == "CONCLUIDO" ? BancoBrSituacaoEnum.Efetivado : status == "REJEITADO" ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
             m.DetalheRejeicaoBancoBr = status == "REJEITADO" ? (string)r["mensagem"] : null;
             m.HorarioBancoBr = r.Value<DateTime?>("dataEfetivacao");
@@ -281,12 +283,12 @@ namespace BancoBr.API.Bradesco
             m.SituacaoBancoBr = null;
             m.DetalheRejeicaoBancoBr = null;
             var original = (string)dados["situacaoConta"];
-            MetadadosOperacao.De(m).SituacaoOriginal = null;
+
             // A validação (tipoRegistro=0) não executa pagamento, mesmo que devolva autenticação.
             if (!executar) return;
-            MetadadosOperacao.De(m).SituacaoOriginal = original;
+
             if (!int.TryParse(original, out var situacao)) return;
-            MetadadosOperacao.De(m).SituacaoOriginal = situacao.ToString("D2", CultureInfo.InvariantCulture);
+
             switch (situacao)
             {
                 case 1:

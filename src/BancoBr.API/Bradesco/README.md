@@ -1,6 +1,6 @@
 # Usar o Bradesco com BancoBr.NET
 
-Esta integração permite pagar boletos, contas de consumo e tributos com código de barras, fazer Pix e TED e consultar saldo e extrato. Você pode usar os métodos que já conhece ou escolher as [chamadas detalhadas](../../../docs/operacoes-api.md) para receber mais informações.
+Esta integração permite pagar boletos, contas de consumo e tributos com código de barras, fazer Pix e TED e consultar saldo e extrato.
 
 **Situação atual:** autenticação, saldo e extrato passaram em um smoke test no sandbox do Bradesco em 28/10/2026, usando certificado mTLS e os cenários de exemplo fornecidos pelo banco. O extrato retornou um lançamento no período do exemplo. Pagamentos e produção ainda dependem de homologação; os demais fluxos foram validados apenas com respostas simuladas.
 
@@ -13,7 +13,7 @@ Esta integração permite pagar boletos, contas de consumo e tributos com códig
 | Pix por chave ou dados bancários | Transferir no dia e acompanhar |
 | TED | Transferir no dia, consultar e identificar devoluções |
 | Saldo | Consultar o saldo da conta corrente, separado do limite de crédito |
-| Extrato | Consultar os lançamentos do período e, nas chamadas detalhadas, o saldo após cada lançamento |
+| Extrato | Consultar os lançamentos do período |
 | DDA, pagamento por QR Code, cancelamento de Pix/TED/conta/tributo e PDF de comprovante | Ainda não disponíveis nesta integração |
 
 A API de geração de QR Code do catálogo do Bradesco serve para receber Pix. O pagamento de QR Code depende de outra especificação, ainda não disponível nos documentos consultados.
@@ -145,14 +145,14 @@ Para contas de consumo e tributos, a biblioteca usa a situação informada pelo 
 | Agendado | `Agendado` |
 | Debitado | `Efetivado` |
 | Saldo insuficiente ou conta encerrada | `Rejeitado`, com o motivo em `DetalheRejeicaoBancoBr` |
-| Em processamento | Situação antiga sem confirmação; `EmProcessamento` nas chamadas detalhadas |
-| Situação ausente ou desconhecida | Sem confirmação de pagamento; `Desconhecida` nas chamadas detalhadas |
+| Em processamento | Situação sem confirmação de efetivação |
+| Situação ausente ou desconhecida | Sem confirmação de pagamento |
 
 A autenticação é guardada para o comprovante quando o banco a fornece. Ela, sozinha, não confirma que houve débito.
 
-Use `ObterComprovanteAsync` nas [chamadas detalhadas](../../../docs/operacoes-api.md) para receber os dados disponíveis do pagamento. A integração não gera nem baixa um PDF. Também não presume que o pagamento foi autorizado quando o banco não informa essa etapa.
+Use `ConsultarAgendamentoAsync` para acompanhar o pagamento e os dados de autenticação fornecidos pelo banco. A integração não gera nem baixa um PDF. Quando o banco não informar a autorização, acompanhe essa etapa pelos canais bancários.
 
-No caso de TED devolvida, o contrato antigo retorna `Rejeitado` e a chamada detalhada retorna `Devolvido`. Outros estados de TED sem confirmação documentada de liquidação permanecem desconhecidos.
+No caso de TED devolvida, `Movimento.SituacaoBancoBr` retorna `Rejeitado`. Outros estados de TED sem confirmação documentada de liquidação permanecem desconhecidos.
 
 ## Detalhes técnicos e pontos de homologação
 
@@ -165,7 +165,6 @@ Esta seção reúne os detalhes de protocolo que podem ajudar na homologação o
 - **Arrecadação:** `situacaoConta` define o resultado. `01/02` indicam agendamento; `04/06/09`, débito; `05`, saldo insuficiente; `07/08`, processamento; `00`, conta encerrada. A etapa de validação (`tipoRegistro=0`) não confirma pagamento.
 - **Boleto:** a resposta de efetivação ilustrada no manual repete dados da prévia. A biblioteca aguarda a consulta de situação para confirmar a liquidação. Na exclusão do agendamento, usa versão 2 conforme a tabela de parâmetros; o exemplo do manual mostra versão 1.
 - **Identificadores:** `NumeroDocumentoNoBanco` guarda o `transactionId` de boleto, `idTransacao` de conta/tributo, `idtransacao` de Pix ou `chaveUnicaParaApi` de TED. O Pix é consultado por identidade, sem depender do recebimento do e2e no envio. A consulta de TED usa os sete primeiros caracteres da chave e a data original.
-- **Chamadas detalhadas:** as referências podem ser serializadas para consulta posterior. `RetornosBanco` contém as respostas dos recursos bancários, incluindo o e2e do Pix quando fornecido. Requisições, cabeçalhos e tokens OAuth não entram nessa captura. `SituacaoOriginal` preserva o código da situação de arrecadação.
 
 ## Fontes oficiais
 
