@@ -14,7 +14,7 @@ namespace BancoBr.Tests
         private static readonly Guid Id = Guid.Parse("11111111-2222-3333-4444-555555555555");
         private static Correntista Origem(int banco) => new Correntista
         {
-            Banco = banco, NumeroAgencia = 1234, NumeroConta = 56789, DVConta = "1", Nome = "Empresa fictícia",
+            Banco = banco, NumeroAgencia = 1234, NumeroConta = 56789, DVAgencia = "0", DVConta = "1", Nome = "Empresa fictícia",
             CPF_CNPJ = "11111111000111", TipoPessoa = TipoInscricaoCPFCNPJEnum.CNPJ
         };
         private static Movimento Boleto() => new Movimento
@@ -29,6 +29,8 @@ namespace BancoBr.Tests
             var http = new HttpClient(handler); var token = new FakeOAuthTokenProvider(); var origem = Origem(banco);
             switch ((BancoEnum)banco)
             {
+                case BancoEnum.BradescoSA:
+                    return BancoApi.ConectarBradesco(new ConfiguracaoAPI { Correntista = origem, AmbienteHomologacao = true }, null, token, http);
                 case BancoEnum.Sicredi:
                     return BancoApi.ConectarSicredi(new ConfiguracaoAPI { Correntista = origem, AmbienteHomologacao = true }, null, token, http);
                 case BancoEnum.BancoDoBrasil:
@@ -60,6 +62,11 @@ namespace BancoBr.Tests
         {
             switch ((BancoEnum)banco)
             {
+                case BancoEnum.BradescoSA:
+                    return new SequencedFakeHttpMessageHandler(
+                        (HttpStatusCode.OK, "{\"status\":200,\"codBarras\":\"23790000000000100000000000000000000000000000\",\"valorTitulo\":10,\"dataVencimento\":20261028}"),
+                        (HttpStatusCode.OK, "{\"status\":200,\"valorCobrado\":10}"),
+                        (HttpStatusCode.OK, "{\"status\":200,\"nroProtocolo\":321}"));
                 case BancoEnum.Sicoob:
                     return new SequencedFakeHttpMessageHandler(
                         (HttpStatusCode.OK, "{\"resultado\":{\"identificadorConsulta\":\"consulta\",\"valorPagamento\":10}}"),
@@ -81,7 +88,8 @@ namespace BancoBr.Tests
         [InlineData(33, BancoBrSituacaoEnum.Agendado)]
         [InlineData(1, BancoBrSituacaoEnum.NaoIntegrado)]
         [InlineData(748, BancoBrSituacaoEnum.Agendado)]
-        public async Task EnviarAgendamentoAsync_ModelosExistentes_PreservaInstanciaEEstados(int banco, BancoBrSituacaoEnum esperado)
+        [InlineData(237, null)]
+        public async Task EnviarAgendamentoAsync_ModelosExistentes_PreservaInstanciaEEstados(int banco, BancoBrSituacaoEnum? esperado)
         {
             var handler = Envio(banco); var movimento = Boleto();
             var resultado = await Criar(banco, handler).EnviarAgendamentoAsync(movimento, Id.ToString());

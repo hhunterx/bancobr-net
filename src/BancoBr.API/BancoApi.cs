@@ -181,7 +181,7 @@ namespace BancoBr.API
             var conta = new Bradesco.ExtratoClient(gateway);
             return new BancoApi(config.Correntista, new Bradesco.PagamentoBoletoClient(pagamentos), new Bradesco.PagamentoConvenioClient(pagamentos),
                 new Bradesco.PagamentoPixClient(pagamentos), new Bradesco.PagamentoTedClient(pagamentos), conta,
-                saldo: conta, pagamentoDireto: pagamentos);
+                comprovante: pagamentos, saldo: conta, pagamentoDireto: pagamentos);
         }
 
         internal static BancoApi ConectarSicredi(ConfiguracaoAPI config, Uri endpoint, IAccessTokenProvider tokens, HttpClient httpClient = null)
@@ -277,7 +277,9 @@ namespace BancoBr.API
             => Requer(_workspace).ObterOuCriarWorkspaceAsync(cancellationToken);
 
         /// <summary>
-        /// No Bradesco, informe NumeroDocumento estável nos limites de cada modalidade; o envio preserva as etapas bancárias de validação e prévia.
+        /// No Bradesco, NumeroDocumento tem prioridade sobre idempotencyKey; boleto exige número positivo de até nove dígitos.
+        /// O envio preserva as etapas bancárias de validação e prévia. No Pix Bradesco, NumeroDocumentoNoBanco
+        /// é registrado antes do HTTP; com esse campo preenchido, a chamada consulta a tentativa original sem outro envio.
         /// No Sicredi, o envio é direto, sem consulta prévia: informe data, valor e NumeroDocumento.
         /// Preserve idempotencyKey nos reenvios; a aceitação ainda depende de processamento/aprovação.
         /// Com NumeroDocumentoNoBanco preenchido, o Sicredi consulta o pagamento existente sem criar outro.

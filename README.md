@@ -124,6 +124,7 @@ await banco.EnviarAgendamentoAsync(movimentoPix);
 Console.WriteLine($"Situação={movimentoPix.SituacaoBancoBr}, EndToEndId={movimentoPix.NumeroDocumentoNoBanco}");
 
 // Santander e Sicredi: mesma chamada para obter o PDF, com o download resolvido pela biblioteca.
+// Bradesco: a mesma chamada gera o PDF para boleto e arrecadação 02/03; veja as limitações no guia do banco.
 // Se o pagamento ou o arquivo ainda não estiver pronto, retorna false: consulte novamente mais tarde.
 bool obtido = await banco.ConsultarComprovanteAsync(movimentoPix);
 if (obtido)

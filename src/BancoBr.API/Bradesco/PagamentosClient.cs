@@ -14,16 +14,15 @@ using Newtonsoft.Json.Linq;
 namespace BancoBr.API.Bradesco
 {
     /// <summary>Fluxos de pagamento conforme os manuais públicos Bradesco. Nunca repete uma execução automaticamente.</summary>
-    internal sealed class PagamentosClient : IPagamentoDiretoApi
+    internal sealed class PagamentosClient : ComprovanteApiBase, IPagamentoDiretoApi
     {
         private static readonly ConditionalWeakTable<Movimento, StrongBox<string>> Identidades = new ConditionalWeakTable<Movimento, StrongBox<string>>();
         private static StrongBox<string> IdentidadeSalva(Movimento movimento) => Identidades.GetValue(movimento, _ => new StrongBox<string>());
         internal BradescoHttpGateway Gateway { get; }
         private readonly BradescoHttpGateway _pix;
-        private Correntista Origem => Gateway.Origem;
         private const string Boleto = "boleto/pagamento-cobranca/v1/";
         private const string Convenio = "pagamento/arrecadacao-via-codbarras/v1/";
-        internal PagamentosClient(BradescoHttpGateway gateway, BradescoHttpGateway pix) { Gateway = gateway; _pix = pix; }
+        internal PagamentosClient(BradescoHttpGateway gateway, BradescoHttpGateway pix) : base(null, gateway.Origem) { Gateway = gateway; _pix = pix; }
         private static string Digitos(string s) => BradescoHttpGateway.Digitos(s);
         private static string Data(DateTime data) => data.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         private static int DataNumero(DateTime data) => int.Parse(data.ToString("yyyyMMdd", CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
@@ -31,13 +30,15 @@ namespace BancoBr.API.Bradesco
         private string Identidade(Movimento m, string chave, int limite, bool numerica)
         {
             // NumeroDocumento é a identidade bancária explícita para protocolos menores que um UUID.
-            var valor = m.NumeroDocumento ?? chave ?? IdentidadeSalva(m).Value;
+            var identidadePix = m.MovimentoItem is MovimentoItemTransferenciaPIX ? m.NumeroDocumentoNoBanco : null;
+            var valor = m.NumeroDocumento ?? chave ?? identidadePix ?? IdentidadeSalva(m).Value;
             if (limite == 35 && Guid.TryParse(valor, out var guid)) valor = guid.ToString("N");
             if (string.IsNullOrWhiteSpace(valor) && !numerica) valor = Guid.NewGuid().ToString("N");
             if (string.IsNullOrWhiteSpace(valor) || valor.Length > limite || (numerica && (!valor.All(c => c >= '0' && c <= '9') || long.Parse(valor, CultureInfo.InvariantCulture) == 0)))
                 throw new ArgumentException("Informe NumeroDocumento único e estável, " + (numerica ? "numérico positivo " : "") + "com até " + limite + " caracteres para esta operação Bradesco.");
             var identidadeSalva = IdentidadeSalva(m);
-            if (identidadeSalva.Value != null && identidadeSalva.Value != valor)
+            if ((identidadeSalva.Value != null && identidadeSalva.Value != valor) ||
+                (!string.IsNullOrEmpty(identidadePix) && identidadePix != valor))
                 throw new ArgumentException("Preserve NumeroDocumento e a identidade bancária entre tentativas.");
             identidadeSalva.Value = valor;
             return valor;
@@ -45,6 +46,13 @@ namespace BancoBr.API.Bradesco
 
         public async Task<Movimento> EnviarAsync(Movimento m, string idempotencyKey, CancellationToken ct)
         {
+            // O idtransacao já registrado identifica inclusive uma tentativa sem resposta.
+            // Consulte antes de considerar outro envio, mesmo em uma execução posterior.
+            if (m.MovimentoItem is MovimentoItemTransferenciaPIX && !string.IsNullOrWhiteSpace(m.NumeroDocumentoNoBanco))
+            {
+                Identidade(m, idempotencyKey, 35, false);
+                return await ConsultarAsync(m, ct).ConfigureAwait(false);
+            }
             if (m.DataPagamento == default || m.ValorPagamento <= 0 || decimal.Round(m.ValorPagamento, 2) != m.ValorPagamento)
                 throw new ArgumentException("Informe DataPagamento e ValorPagamento positivo com até duas casas decimais.");
             switch (m.MovimentoItem)
@@ -54,7 +62,7 @@ namespace BancoBr.API.Bradesco
                     await ConsultarBoletoAsync(m, ct).ConfigureAwait(false);
                     return await PagarBoletoAsync(m, ct).ConfigureAwait(false);
                 case MovimentoItemPagamentoConvenioCodigoBarra _:
-                    if (m.DataPagamento.Date != DateTime.Today) throw new NotSupportedException("Esta integração de arrecadação Bradesco suporta débito no dia; agendamento não homologado.");
+                    if (m.DataPagamento.Date < DateTime.Today) throw new ArgumentException("DataPagamento não pode estar no passado para arrecadação Bradesco.");
                     Identidade(m, idempotencyKey, 9, false);
                     await ConvenioAsync(m, false, ct).ConfigureAwait(false);
                     return await ConvenioAsync(m, true, ct).ConfigureAwait(false);
@@ -80,14 +88,14 @@ namespace BancoBr.API.Bradesco
                         recebedor["digitoConta"] = pix.DVConta;
                         recebedor["tipoConta"] = pix.TipoConta == TipoContaEnum.ContaPoupanca ? "CONTA_POUPANCA" : pix.TipoConta == TipoContaEnum.ContaPagamento ? "CONTA_PAGAMENTO" : "CONTA_CORRENTE";
                     }
+                    // Registre antes do HTTP: uma falha pode ocorrer após a aceitação pelo banco.
+                    m.NumeroDocumentoNoBanco = id;
                     var r = await _pix.JsonAsync(HttpMethod.Post, "v1/spi/solicitar-transferencia", new JObject
                     {
                         ["pagador"] = new JObject { ["tipoChave"] = "AGENCIACONTA", ["agencia"] = Origem.NumeroAgencia.ToString("D4", CultureInfo.InvariantCulture), ["conta"] = Origem.NumeroConta.ToString(CultureInfo.InvariantCulture) },
                         ["recebedor"] = recebedor, ["idtransacao"] = id,
                         ["valor"] = m.ValorPagamento.ToString("F2", CultureInfo.InvariantCulture), ["descricao"] = m.NumeroDocumento ?? "Pagamento"
                     }, ct).ConfigureAwait(false);
-                    // A consulta por idtransacao permite recuperar inclusive um envio cujo retorno se perdeu.
-                    m.NumeroDocumentoNoBanco = id;
                     AplicarPix(m, r);
                     return m;
                 case MovimentoItemTransferenciaTED ted:
@@ -211,11 +219,7 @@ namespace BancoBr.API.Bradesco
             {
                 case MovimentoItemPagamentoTituloCodigoBarra _:
                     if (!long.TryParse(m.NumeroDocumentoNoBanco, out var id) || id <= 0 || id > 999999999) throw new ArgumentException("Identificador de boleto Bradesco inválido.");
-                    var r = await Gateway.JsonAsync(HttpMethod.Post, Boleto + "cobranca-pagamento-consulta/consulta-pagamento-especifico", new JObject
-                    {
-                        ["versaoLayout"] = "001", ["numeroBanco"] = 237, ["numeroAgencia"] = Origem.NumeroAgencia,
-                        ["numeroConta"] = Origem.NumeroConta, ["numeroProtocolo"] = 0, ["dataPagamento"] = 0, ["transactionId"] = id
-                    }, ct).ConfigureAwait(false);
+                    var r = await ConsultarDadosBoletoAsync(id, ct).ConfigureAwait(false);
                     var estado = r.Value<int?>("situacaoPagamento");
 
                     m.SituacaoBancoBr = estado == 1 || estado == 11 ? BancoBrSituacaoEnum.Efetivado : estado == 7 ? BancoBrSituacaoEnum.Agendado
@@ -235,11 +239,57 @@ namespace BancoBr.API.Bradesco
                     m.DetalheRejeicaoBancoBr = (string)ted["descricaoDaDevolucao"];
                     return m;
                 case MovimentoItemPagamentoConvenioCodigoBarra _:
-                    var url = Convenio + Origem.NumeroAgencia + "/" + Origem.NumeroConta + "/1?tipoConsulta=3&segmentoConsulta=99&dataInicial=" + Data(m.DataPagamento) + "&dataFinal=" + Data(m.DataPagamento) + "&idTransacao=" + Uri.EscapeDataString(m.NumeroDocumentoNoBanco);
-                    AplicarConvenio(m, await Gateway.JsonAsync(HttpMethod.Get, url, null, ct).ConfigureAwait(false), true);
+                    AplicarConvenio(m, await ConsultarDadosConvenioAsync(m, ct).ConfigureAwait(false), true);
                     return m;
                 default: throw new NotSupportedException("Consulta não documentada para esta modalidade Bradesco.");
             }
+        }
+
+        private Task<JObject> ConsultarDadosBoletoAsync(long id, CancellationToken ct)
+            => Gateway.JsonAsync(HttpMethod.Post, Boleto + "cobranca-pagamento-consulta/consulta-pagamento-especifico", new JObject
+            {
+                ["versaoLayout"] = "001", ["numeroBanco"] = 237, ["numeroAgencia"] = Origem.NumeroAgencia,
+                ["numeroConta"] = Origem.NumeroConta, ["numeroProtocolo"] = 0, ["dataPagamento"] = 0, ["transactionId"] = id
+            }, ct);
+
+        private Task<JObject> ConsultarDadosConvenioAsync(Movimento m, CancellationToken ct)
+        {
+            var tipoConsulta = m.DataPagamento.Date > DateTime.Today ? "4" : "3";
+            var url = Convenio + Origem.NumeroAgencia + "/" + Origem.NumeroConta + "/1?tipoConsulta=" + tipoConsulta + "&segmentoConsulta=99&dataInicial=" + Data(m.DataPagamento) + "&dataFinal=" + Data(m.DataPagamento) + "&idTransacao=" + Uri.EscapeDataString(m.NumeroDocumentoNoBanco);
+            return Gateway.JsonAsync(HttpMethod.Get, url, null, ct);
+        }
+
+        /// <summary>Gera o PDF a partir da consulta bancária e dos modelos de comprovante documentados.</summary>
+        internal override async Task<bool> ConsultarComprovanteAsync(Movimento m, CancellationToken cancellationToken = default)
+        {
+            m.ArquivoComprovantePDF = null;
+            cancellationToken.ThrowIfCancellationRequested();
+            if (string.IsNullOrWhiteSpace(m.NumeroDocumentoNoBanco))
+                throw new ArgumentException("Informe NumeroDocumentoNoBanco para consultar o comprovante.");
+            JObject dados;
+            if (m.MovimentoItem is MovimentoItemPagamentoTituloCodigoBarra)
+            {
+                if (!long.TryParse(m.NumeroDocumentoNoBanco, out var id) || id <= 0 || id > 999999999)
+                    throw new ArgumentException("Identificador de boleto Bradesco inválido.");
+                dados = await ConsultarDadosBoletoAsync(id, cancellationToken).ConfigureAwait(false);
+                var estado = dados.Value<int?>("situacaoPagamento");
+                m.SituacaoBancoBr = estado == 1 || estado == 11 ? BancoBrSituacaoEnum.Efetivado : estado == 7 ? BancoBrSituacaoEnum.Agendado
+                    : estado == 2 || estado == 8 ? BancoBrSituacaoEnum.Cancelado : estado == 3 || estado == 9 || estado == 12 ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
+                m.DetalheRejeicaoBancoBr = (string)dados["descrMotivo"];
+                if (dados["valorPagamento"] != null) m.ValorPagamento = dados.Value<decimal>("valorPagamento");
+            }
+            else if (m.MovimentoItem is MovimentoItemPagamentoConvenioCodigoBarra)
+            {
+                if (m.DataPagamento == default) throw new ArgumentException("Informe a data original do pagamento.");
+                var resposta = await ConsultarDadosConvenioAsync(m, cancellationToken).ConfigureAwait(false);
+                AplicarConvenio(m, resposta, true);
+                dados = (JObject)((JArray)resposta["regSaida"])[0];
+            }
+            else throw new NotSupportedException("Comprovante PDF Bradesco disponível somente para boleto e arrecadação dos tipos 02 e 03.");
+            if (m.SituacaoBancoBr != BancoBrSituacaoEnum.Efetivado) return false;
+            cancellationToken.ThrowIfCancellationRequested();
+            m.ArquivoComprovantePDF = ComprovantePdf.Gerar(m, Origem, dados);
+            return m.ArquivoComprovantePDF != null;
         }
 
         public async Task<Movimento> CancelarAsync(Movimento m, CancellationToken ct)

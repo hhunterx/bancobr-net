@@ -9,12 +9,13 @@ Esta integração permite pagar boletos, contas de consumo e tributos com códig
 | Operação | Suporte nesta integração |
 | --- | --- |
 | Boleto com código de barras ou linha digitável | Consultar os dados, pagar ou agendar, acompanhar e cancelar o agendamento |
-| Conta de consumo ou tributo com código de barras | Validar, pagar no dia e acompanhar |
+| Conta de consumo ou tributo com código de barras | Validar, pagar ou agendar e acompanhar |
 | Pix por chave ou dados bancários | Transferir no dia e acompanhar |
 | TED | Transferir no dia, consultar e identificar devoluções |
 | Saldo | Consultar o saldo da conta corrente, separado do limite de crédito |
 | Extrato | Consultar os lançamentos do período |
-| DDA, pagamento por QR Code, cancelamento de Pix/TED/conta/tributo e PDF de comprovante | Ainda não disponíveis nesta integração |
+| Comprovante PDF | Boleto e arrecadação dos tipos 02 (tributo genérico) e 03 (conta de consumo), após confirmação de débito e com os dados obrigatórios |
+| DDA, pagamento por QR Code e cancelamento de Pix/TED/conta/tributo | Consulte as limitações abaixo |
 
 A API de geração de QR Code do catálogo do Bradesco serve para receber Pix. O pagamento de QR Code depende de outra especificação, ainda não disponível nos documentos consultados.
 
@@ -112,12 +113,12 @@ Use os mesmos [modelos de movimento dos exemplos gerais](../../../README.md#inte
 
 | Operação | Dados necessários |
 | --- | --- |
-| Conta de consumo ou tributo | Código de barras de 44 dígitos, iniciado por 8, data do dia e valor |
+| Conta de consumo ou tributo | Código de barras de 44 dígitos, iniciado por 8, data do dia ou futura e valor |
 | Pix por chave | Nome e CPF/CNPJ do favorecido, tipo de chave, chave, data do dia e valor |
 | Pix por dados bancários | Nome e CPF/CNPJ do favorecido, ISPB, agência, conta, dígito, tipo de conta, data do dia e valor |
 | TED | Nome e CPF/CNPJ do favorecido, banco, agência, conta corrente, dígito, finalidade, data do dia e valor |
 
-Os valores devem ter até duas casas decimais. Frações de centavo são rejeitadas sem arredondamento. Nesta implementação, Pix, TED, contas e tributos aceitam somente a data do dia; boletos também permitem agendamento.
+Os valores devem ter até duas casas decimais. Frações de centavo são rejeitadas sem arredondamento. Pix e TED aceitam somente a data do dia. Boletos, contas e tributos permitem agendamento. Para agendar arrecadação, preencha `DataPagamento` com a data futura e use o mesmo `EnviarAgendamentoAsync`; a biblioteca valida (`tipoRegistro=0`) e envia (`tipoRegistro=1`). A aceitação e as datas permitidas dependem do banco; somente a situação retornada confirma o agendamento. Datas passadas são rejeitadas localmente. Consultas de arrecadação com data futura usam `tipoConsulta=4`, e as demais usam `3`.
 
 ## Guardar a identidade do pagamento
 
@@ -132,7 +133,9 @@ Salve um `NumeroDocumento` antes do primeiro envio. Use outro número para um no
 
 Depois do envio, guarde também `NumeroDocumentoNoBanco` e a data original do pagamento. Esses dados permitem consultar o pagamento em outra execução da aplicação.
 
-No Pix, se você omitir `NumeroDocumento`, a biblioteca usa `idempotencyKey`. Um UUID é enviado com 32 caracteres, sem hífens. Se ambos forem omitidos, a identidade é gerada e preservada apenas enquanto você reutilizar o mesmo objeto `Movimento`. Para recuperar um envio após reiniciar a aplicação, prefira salvar a identidade antes de enviar.
+`NumeroDocumento` tem prioridade sobre `idempotencyKey`. Se ele estiver nulo, a biblioteca usa a chave informada. Para boleto, o valor selecionado deve ser numérico positivo com até nove dígitos; valores maiores, GUIDs e outros valores inválidos geram `ArgumentException` antes de qualquer chamada ao banco. Não há truncamento nem conversão de GUID em número.
+
+No Pix, se você omitir `NumeroDocumento`, a biblioteca usa `idempotencyKey`. Um UUID é enviado com 32 caracteres, sem hífens. Se ambos forem omitidos, a identidade é gerada. Antes do envio HTTP, ela fica registrada em `NumeroDocumentoNoBanco`, inclusive se a resposta se perder. Persista o movimento também quando ocorrer uma exceção. Ao chamar `EnviarAgendamentoAsync` com esse campo preenchido, a biblioteca consulta a tentativa original, sem solicitar outra transferência; uma identidade explícita divergente é rejeitada. Falhas de consulta são propagadas para reconciliação, sem novo envio automático. Para recuperação após encerramento abrupto da aplicação, salve uma identidade explícita antes do primeiro envio.
 
 **Se o envio de uma TED ficar sem resposta, confirme a operação com o banco antes de reenviar.** O manual não garante que o identificador evite uma transferência duplicada.
 
@@ -150,9 +153,34 @@ Para contas de consumo e tributos, a biblioteca usa a situação informada pelo 
 
 A autenticação é guardada para o comprovante quando o banco a fornece. Ela, sozinha, não confirma que houve débito.
 
-Use `ConsultarAgendamentoAsync` para acompanhar o pagamento e os dados de autenticação fornecidos pelo banco. A integração não gera nem baixa um PDF. Quando o banco não informar a autorização, acompanhe essa etapa pelos canais bancários.
+Use `ConsultarAgendamentoAsync` para acompanhar o pagamento. Para boleto, conta de consumo e tributo genérico, obtenha o PDF pela chamada padrão:
+
+```csharp
+bool obtido = await banco.ConsultarComprovanteAsync(movimento);
+if (obtido)
+    System.IO.File.WriteAllBytes("comprovante.pdf", movimento.ArquivoComprovantePDF);
+```
+
+O cliente consulta o banco e gera o documento localmente a partir dos dados retornados, seguindo os campos dos manuais. O arquivo identifica essa origem; não é um PDF baixado do banco. O método retorna `false` para pagamento ainda não efetivado ou dados obrigatórios incompletos, sem manter um PDF anterior no movimento. Erros HTTP e cancelamento propagam exceções.
+
+Para boleto, preserve `DataPagamento` e `MovimentoItemPagamentoTituloCodigoBarra.NumeroAutenticacaoPagamento` (o `nroProtocolo` recebido no envio). A consulta específica não devolve esse protocolo; sem ele, o método retorna `false`. Não usamos `transactionId` como autenticação nem inventamos dados faltantes. Valores de juros, multa, descontos, abatimentos e bônus são apresentados conforme a consulta bancária.
+
+Para arrecadação, estão implementados os modelos `tipoComprovante=02` e `03`. Os outros modelos geram `NotSupportedException`, mesmo que o pagamento tenha sido efetivado. Os campos textuais usam a codificação ocidental WinAnsi; caracteres fora desse conjunto são substituídos por `?`.
 
 No caso de TED devolvida, `Movimento.SituacaoBancoBr` retorna `Rejeitado`. Outros estados de TED sem confirmação documentada de liquidação permanecem desconhecidos.
+
+## Limitações e funcionalidades pendentes
+
+| Recurso | Motivo e comportamento atual |
+| --- | --- |
+| DDA (listar títulos a pagar) | Não implementado; falta especificação dessa operação nos documentos consultados. O indicador DDA de um boleto não equivale a uma listagem. Não há confirmação de indisponibilidade em outros produtos do Bradesco. |
+| Pagamento por QR Code/Copia e Cola | Não implementado; falta um fluxo de pagamento documentado. A API de geração de QR Code é de recebimento. Menções a QR Code no catálogo de erros não definem os parâmetros de pagamento. |
+| Cancelamento e agendamento de TED | Explicitamente não suportados no manual TED, seção “Unavailable Features”. |
+| Cancelamento de Pix, conta e tributo | Não implementado; não há endpoint de cancelamento descrito nos manuais consultados. Isso não comprova ausência em outros produtos ou canais. |
+| PDF de Pix e TED | Não implementado. Não há download documentado de PDF; esses comprovantes exigem definição e validação próprias. |
+| PDF de tributos especializados | Modelos como DARF, FGTS e GARE são documentados, mas ainda não implementados. Não são substituídos pelo modelo genérico. |
+| Outras operações de boleto | Consulta de limites, listas de pagamentos, devoluções/estornos e alteração de agendamento constam no manual, mas não são expostas por esta integração. Não foram criadas chamadas públicas alternativas. |
+| Homologação | Os novos agendamentos e comprovantes têm validação local com HTTP simulado; pagamentos e produção continuam pendentes de homologação bancária. |
 
 ## Detalhes técnicos e pontos de homologação
 

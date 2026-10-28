@@ -281,6 +281,105 @@ namespace BancoBr.Tests.Bradesco
             Assert.Equal((string)JObject.Parse(h.Bodies[0]!)["idtransacao"]!, (string)JObject.Parse(h.Bodies[1]!)["idtransacao"]!);
         }
 
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public async Task Pix_ReenvioPersistido_ConsultaIdentidadeOriginalSemNovoPagamento(int dias)
+        {
+            var h = Respostas("{\"status\":\"EM_PROCESSAMENTO\"}", "{\"status\":\"CONCLUIDO\"}");
+            var m = Movimento(new MovimentoItemTransferenciaPIX { TipoChavePIX = FormaIniciacaoEnum.PIX_Email, ChavePIX = "teste@example.com" });
+            m.NumeroDocumento = null;
+            await Conectar(h).EnviarAgendamentoAsync(m);
+            var identidade = m.NumeroDocumentoNoBanco;
+            var recuperado = JsonConvert.DeserializeObject<Movimento>(JsonConvert.SerializeObject(m))!;
+            recuperado.MovimentoItem = new MovimentoItemTransferenciaPIX();
+            recuperado.DataPagamento = DateTime.Today.AddDays(dias);
+
+            var resultado = await Conectar(h).EnviarAgendamentoAsync(recuperado);
+
+            Assert.Same(recuperado, resultado);
+            Assert.Equal(identidade, resultado.NumeroDocumentoNoBanco);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, resultado.SituacaoBancoBr);
+            Assert.Equal(2, h.Requests.Count);
+            Assert.EndsWith("/consulta/transferencia/" + identidade, h.Requests[1].RequestUri!.AbsolutePath);
+        }
+
+        [Fact]
+        public async Task Pix_FalhaNoEnvio_PreservaIdentidadeParaRecuperacaoAposPersistencia()
+        {
+            var h = new SequencedFakeHttpMessageHandler(
+                (HttpStatusCode.ServiceUnavailable, "{}"), (HttpStatusCode.OK, "{\"status\":\"CONCLUIDO\"}"));
+            var m = Movimento(new MovimentoItemTransferenciaPIX { TipoChavePIX = FormaIniciacaoEnum.PIX_Email, ChavePIX = "teste@example.com" });
+            m.NumeroDocumento = null;
+            await Assert.ThrowsAsync<BancoApiException>(() => Conectar(h).EnviarAgendamentoAsync(m));
+            var identidade = (string)JObject.Parse(h.Bodies[0]!)["idtransacao"]!;
+            Assert.Equal(identidade, m.NumeroDocumentoNoBanco);
+            var recuperado = JsonConvert.DeserializeObject<Movimento>(JsonConvert.SerializeObject(m))!;
+            recuperado.MovimentoItem = new MovimentoItemTransferenciaPIX();
+
+            await Conectar(h).EnviarAgendamentoAsync(recuperado);
+
+            Assert.Equal(2, h.Requests.Count);
+            Assert.EndsWith("/consulta/transferencia/" + identidade, h.Requests[1].RequestUri!.AbsolutePath);
+        }
+
+        [Fact]
+        public async Task Pix_ConsultaDaTentativaFalha_NaoSolicitaOutraTransferencia()
+        {
+            var h = new SequencedFakeHttpMessageHandler((HttpStatusCode.NotFound, "{}"));
+            var m = Movimento(new MovimentoItemTransferenciaPIX());
+            m.NumeroDocumento = null;
+            m.NumeroDocumentoNoBanco = "tentativa-original";
+
+            await Assert.ThrowsAsync<BancoApiException>(() => Conectar(h).EnviarAgendamentoAsync(m));
+
+            Assert.Equal("tentativa-original", m.NumeroDocumentoNoBanco);
+            Assert.EndsWith("/consulta/transferencia/tentativa-original", Assert.Single(h.Requests).RequestUri!.AbsolutePath);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task Pix_ReenvioComIdentidadeDivergente_NaoEnvia(bool documento)
+        {
+            var h = Respostas();
+            var m = Movimento(new MovimentoItemTransferenciaPIX { TipoChavePIX = FormaIniciacaoEnum.PIX_Email, ChavePIX = "teste@example.com" });
+            m.NumeroDocumentoNoBanco = "original";
+            m.NumeroDocumento = documento ? "outra" : null;
+            await Assert.ThrowsAsync<ArgumentException>(() => Conectar(h).EnviarAgendamentoAsync(m, documento ? null : "outra"));
+            Assert.Empty(h.Requests);
+        }
+
+        [Theory]
+        [InlineData("1", null, "1")]
+        [InlineData("999999999", null, "999999999")]
+        [InlineData(null, "123456789", "123456789")]
+        [InlineData("123456789", "chave-ignorada", "123456789")]
+        public async Task Boleto_IdentidadeValida_PriorizaNumeroDocumento(string? documento, string? chave, string esperado)
+        {
+            var h = Respostas(Validacao, "{\"status\":200,\"valorCobrado\":150}", "{\"status\":200}");
+            var m = Movimento(new MovimentoItemPagamentoTituloCodigoBarra { CodigoBarras = new string('0', 44) });
+            m.NumeroDocumento = documento;
+            await Conectar(h).EnviarAgendamentoAsync(m, chave);
+            Assert.Equal(esperado, m.NumeroDocumentoNoBanco);
+            Assert.Equal(long.Parse(esperado), (long)JObject.Parse(h.Bodies[2]!)["transactionId"]!);
+        }
+
+        [Theory]
+        [InlineData("1000000000")]
+        [InlineData("11111111-2222-3333-4444-555555555555")]
+        [InlineData("abc")]
+        [InlineData("0")]
+        public async Task Boleto_ChaveInvalidaSemNumeroDocumento_NaoEnvia(string chave)
+        {
+            var h = Respostas();
+            var m = Movimento(new MovimentoItemPagamentoTituloCodigoBarra());
+            m.NumeroDocumento = null;
+            var erro = await Assert.ThrowsAsync<ArgumentException>(() => Conectar(h).EnviarAgendamentoAsync(m, chave));
+            Assert.Contains("9", erro.Message);
+            Assert.Empty(h.Requests);
+        }
+
         [Fact]
         public async Task Pix_MovimentoPersistido_ConsultaSemReexecutar()
         {
