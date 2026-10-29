@@ -97,7 +97,7 @@ var movimento = new Movimento
 await banco.EnviarAgendamentoAsync(movimento);
 await banco.ConsultarAgendamentoAsync(movimento);
 
-if (movimento.SituacaoBancoBr == BancoBrSituacaoEnum.Efetivado)
+if (movimento.Situacao == BancoBrSituacaoEnum.Efetivado)
 {
     Console.WriteLine("Pagamento realizado.");
 }
@@ -147,7 +147,7 @@ Para contas de consumo e tributos, a biblioteca usa a situação informada pelo 
 | --- | --- |
 | Agendado | `Agendado` |
 | Debitado | `Efetivado` |
-| Saldo insuficiente ou conta encerrada | `Rejeitado`, com o motivo em `DetalheRejeicaoBancoBr` |
+| Saldo insuficiente ou conta encerrada | `Rejeitado`, com o motivo em `DetalheRejeicao` |
 | Em processamento | Situação sem confirmação de efetivação |
 | Situação ausente ou desconhecida | Sem confirmação de pagamento |
 
@@ -167,7 +167,7 @@ Para boleto, preserve `DataPagamento` e `MovimentoItemPagamentoTituloCodigoBarra
 
 Para arrecadação, estão implementados os modelos `tipoComprovante=02` e `03`. Os outros modelos geram `NotSupportedException`, mesmo que o pagamento tenha sido efetivado. Os campos textuais usam a codificação ocidental WinAnsi; caracteres fora desse conjunto são substituídos por `?`.
 
-No caso de TED devolvida, `Movimento.SituacaoBancoBr` retorna `Rejeitado`. Outros estados de TED sem confirmação documentada de liquidação permanecem desconhecidos.
+No caso de TED devolvida, `Movimento.Situacao` retorna `Rejeitado`. Outros estados de TED sem confirmação documentada de liquidação permanecem desconhecidos.
 
 ## Limitações e funcionalidades pendentes
 

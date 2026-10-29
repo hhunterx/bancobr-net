@@ -120,7 +120,7 @@ namespace BancoBr.API.Bradesco
                     var bancoId = (string)result["chaveUnicaParaApi"];
                     if (string.IsNullOrWhiteSpace(bancoId) || bancoId.Length < 7) throw new JsonSerializationException("TED sem chaveUnicaParaApi válida; reconcilie antes de reenviar.");
                     m.NumeroDocumentoNoBanco = bancoId;
-                    m.SituacaoBancoBr = null;
+                    m.Situacao = null;
 
                     return m;
                 default: throw new NotSupportedException("Modalidade não documentada nas APIs públicas Bradesco (incluindo Pix QR Code).");
@@ -138,7 +138,7 @@ namespace BancoBr.API.Bradesco
                 ["tipoEntrada"] = codigo.Length == 44 ? 1 : 2, ["dadosEntrada"] = linha,
                 ["bancoTitulo"] = int.Parse(codigo.Substring(0, 3), CultureInfo.InvariantCulture), ["agenciaDeb"] = Origem.NumeroAgencia, ["contaDeb"] = Origem.NumeroConta
             }, ct).ConfigureAwait(false);
-            m.SituacaoBancoBr = null;
+            m.Situacao = null;
             item.CodigoBarras = (string)r["codBarras"] ?? throw new JsonSerializationException("Validação sem codBarras.");
             item.IdentificadorConsulta = (string)r["numeroCtrlCip"];
             if ((string)r["consultaCip"] == "S" && string.IsNullOrEmpty(item.IdentificadorConsulta))
@@ -187,7 +187,7 @@ namespace BancoBr.API.Bradesco
             var protocolo = (string)r["nroProtocolo"];
             ((MovimentoItemPagamentoTituloCodigoBarra)m.MovimentoItem).NumeroAutenticacaoPagamento = protocolo == "0" ? null : protocolo;
             // O exemplo oficial de efetivação ecoa a prévia. Confirmação de liquidação somente pela consulta de situação.
-            m.SituacaoBancoBr = null;
+            m.Situacao = null;
 
             return m;
         }
@@ -222,9 +222,9 @@ namespace BancoBr.API.Bradesco
                     var r = await ConsultarDadosBoletoAsync(id, ct).ConfigureAwait(false);
                     var estado = r.Value<int?>("situacaoPagamento");
 
-                    m.SituacaoBancoBr = estado == 1 || estado == 11 ? BancoBrSituacaoEnum.Efetivado : estado == 7 ? BancoBrSituacaoEnum.Agendado
+                    m.Situacao = estado == 1 || estado == 11 ? BancoBrSituacaoEnum.Efetivado : estado == 7 ? BancoBrSituacaoEnum.Agendado
                         : estado == 2 || estado == 8 ? BancoBrSituacaoEnum.Cancelado : estado == 3 || estado == 9 || estado == 12 ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
-                    m.DetalheRejeicaoBancoBr = (string)r["descrMotivo"];
+                    m.DetalheRejeicao = (string)r["descrMotivo"];
                     if (r["valorPagamento"] != null) m.ValorPagamento = r.Value<decimal>("valorPagamento");
                     return m;
                 case MovimentoItemTransferenciaPIX _:
@@ -235,8 +235,8 @@ namespace BancoBr.API.Bradesco
                     var ted = await Gateway.JsonAsync(HttpMethod.Post, "transferencia/ted/v1/consulta", new JObject { ["numeroDocumento"] = numero, ["dataOperacao"] = m.DataPagamento.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) }, ct).ConfigureAwait(false);
                     var status = (string)ted["statusMensagem"];
 
-                    m.SituacaoBancoBr = status == "DEVOLVIDA" ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
-                    m.DetalheRejeicaoBancoBr = (string)ted["descricaoDaDevolucao"];
+                    m.Situacao = status == "DEVOLVIDA" ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
+                    m.DetalheRejeicao = (string)ted["descricaoDaDevolucao"];
                     return m;
                 case MovimentoItemPagamentoConvenioCodigoBarra _:
                     AplicarConvenio(m, await ConsultarDadosConvenioAsync(m, ct).ConfigureAwait(false), true);
@@ -273,9 +273,9 @@ namespace BancoBr.API.Bradesco
                     throw new ArgumentException("Identificador de boleto Bradesco inválido.");
                 dados = await ConsultarDadosBoletoAsync(id, cancellationToken).ConfigureAwait(false);
                 var estado = dados.Value<int?>("situacaoPagamento");
-                m.SituacaoBancoBr = estado == 1 || estado == 11 ? BancoBrSituacaoEnum.Efetivado : estado == 7 ? BancoBrSituacaoEnum.Agendado
+                m.Situacao = estado == 1 || estado == 11 ? BancoBrSituacaoEnum.Efetivado : estado == 7 ? BancoBrSituacaoEnum.Agendado
                     : estado == 2 || estado == 8 ? BancoBrSituacaoEnum.Cancelado : estado == 3 || estado == 9 || estado == 12 ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
-                m.DetalheRejeicaoBancoBr = (string)dados["descrMotivo"];
+                m.DetalheRejeicao = (string)dados["descrMotivo"];
                 if (dados["valorPagamento"] != null) m.ValorPagamento = dados.Value<decimal>("valorPagamento");
             }
             else if (m.MovimentoItem is MovimentoItemPagamentoConvenioCodigoBarra)
@@ -286,7 +286,7 @@ namespace BancoBr.API.Bradesco
                 dados = (JObject)((JArray)resposta["regSaida"])[0];
             }
             else throw new NotSupportedException("Comprovante PDF Bradesco disponível somente para boleto e arrecadação dos tipos 02 e 03.");
-            if (m.SituacaoBancoBr != BancoBrSituacaoEnum.Efetivado) return false;
+            if (m.Situacao != BancoBrSituacaoEnum.Efetivado) return false;
             cancellationToken.ThrowIfCancellationRequested();
             m.ArquivoComprovantePDF = ComprovantePdf.Gerar(m, Origem, dados);
             return m.ArquivoComprovantePDF != null;
@@ -302,7 +302,7 @@ namespace BancoBr.API.Bradesco
                 ["contaDebito"] = Origem.NumeroConta, ["digitoConta"] = Origem.DVConta, ["numeroProtocolo"] = 0, ["idTransacao"] = id
             }, ct).ConfigureAwait(false);
             if (cancelamento.Value<int?>("status") != 200) throw new JsonSerializationException("Cancelamento sem confirmação de sucesso.");
-            m.SituacaoBancoBr = BancoBrSituacaoEnum.Cancelado;
+            m.Situacao = BancoBrSituacaoEnum.Cancelado;
 
             return m;
         }
@@ -311,9 +311,9 @@ namespace BancoBr.API.Bradesco
         {
             var status = (string)r["status"];
 
-            m.SituacaoBancoBr = status == "CONCLUIDO" ? BancoBrSituacaoEnum.Efetivado : status == "REJEITADO" ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
-            m.DetalheRejeicaoBancoBr = status == "REJEITADO" ? (string)r["mensagem"] : null;
-            m.HorarioBancoBr = r.Value<DateTime?>("dataEfetivacao");
+            m.Situacao = status == "CONCLUIDO" ? BancoBrSituacaoEnum.Efetivado : status == "REJEITADO" ? BancoBrSituacaoEnum.Rejeitado : (BancoBrSituacaoEnum?)null;
+            m.DetalheRejeicao = status == "REJEITADO" ? (string)r["mensagem"] : null;
+            m.Horario = r.Value<DateTime?>("dataEfetivacao");
             if (m.MovimentoItem is MovimentoItemTransferenciaPIX item && r["recebedor"] is JObject recebedor)
             {
                 item.TitularConfirmadoNome = (string)recebedor["nomeFavorecido"];
@@ -330,8 +330,8 @@ namespace BancoBr.API.Bradesco
             item.Autenticacao = (string)dados["autenticacaoBancaria"];
             item.ValorDocumento = dados.Value<decimal?>("valorDebito") ?? m.ValorPagamento;
             item.Convenio = (string)dados["codigoEmpresaConveniada"];
-            m.SituacaoBancoBr = null;
-            m.DetalheRejeicaoBancoBr = null;
+            m.Situacao = null;
+            m.DetalheRejeicao = null;
             var original = (string)dados["situacaoConta"];
 
             // A validação (tipoRegistro=0) não executa pagamento, mesmo que devolva autenticação.
@@ -343,17 +343,17 @@ namespace BancoBr.API.Bradesco
             {
                 case 1:
                 case 2:
-                    m.SituacaoBancoBr = BancoBrSituacaoEnum.Agendado;
+                    m.Situacao = BancoBrSituacaoEnum.Agendado;
                     break;
                 case 4:
                 case 6:
                 case 9:
-                    m.SituacaoBancoBr = BancoBrSituacaoEnum.Efetivado;
+                    m.Situacao = BancoBrSituacaoEnum.Efetivado;
                     break;
                 case 0:
                 case 5:
-                    m.SituacaoBancoBr = BancoBrSituacaoEnum.Rejeitado;
-                    m.DetalheRejeicaoBancoBr = situacao == 5 ? "Saldo insuficiente." : "Conta encerrada.";
+                    m.Situacao = BancoBrSituacaoEnum.Rejeitado;
+                    m.DetalheRejeicao = situacao == 5 ? "Saldo insuficiente." : "Conta encerrada.";
                     break;
             }
         }

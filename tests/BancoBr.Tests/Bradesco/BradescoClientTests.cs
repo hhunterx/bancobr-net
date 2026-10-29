@@ -38,7 +38,7 @@ namespace BancoBr.Tests.Bradesco
             var m = Movimento(new MovimentoItemPagamentoTituloCodigoBarra { CodigoBarras = new string('0', 44) });
             var resultado = await banco.EnviarAgendamentoAsync(m);
             Assert.Same(m, resultado);
-            Assert.Null(resultado.SituacaoBancoBr);
+            Assert.Null(resultado.Situacao);
             Assert.Equal("123456", m.NumeroDocumentoNoBanco);
             Assert.EndsWith("cobranca-efetivacao/solicitacao/executar", h.Requests[2].RequestUri!.AbsolutePath);
             var body = JObject.Parse(h.Bodies[2]!);
@@ -50,7 +50,7 @@ namespace BancoBr.Tests.Bradesco
             var consultado = JsonConvert.DeserializeObject<Movimento>(salvo)!;
             consultado.MovimentoItem = new MovimentoItemPagamentoTituloCodigoBarra();
             await banco.ConsultarAgendamentoAsync(consultado);
-            Assert.Equal(BancoBrSituacaoEnum.Agendado, consultado.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Agendado, consultado.Situacao);
             Assert.Equal(123456, (long)JObject.Parse(h.Bodies[3]!)["transactionId"]!);
             await banco.CancelarAgendamentoAsync(consultado);
             Assert.Equal(2, (int)JObject.Parse(h.Bodies[4]!)["versao"]!);
@@ -89,14 +89,14 @@ namespace BancoBr.Tests.Bradesco
             var banco = Conectar(h, false);
             var m = Movimento(new MovimentoItemTransferenciaPIX { TipoChavePIX = FormaIniciacaoEnum.PIX_Telefone, ChavePIX = "+5511999999999" });
             await banco.EnviarAgendamentoAsync(m);
-            Assert.Equal(situacao, m.SituacaoBancoBr);
+            Assert.Equal(situacao, m.Situacao);
             var body = JObject.Parse(h.Bodies[0]!);
             Assert.Equal("qrpix.bradesco.com.br", h.Requests[0].RequestUri!.Host);
             Assert.Equal("TELEFONE", (string)body["recebedor"]!["tipoChave"]!);
             Assert.Equal("1234", (string)body["pagador"]!["agencia"]!);
             await banco.ConsultarAgendamentoAsync(m);
             Assert.EndsWith("/consulta/transferencia/123456", h.Requests[1].RequestUri!.AbsolutePath);
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.Situacao);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace BancoBr.Tests.Bradesco
             Assert.Equal(0, (int)JObject.Parse(h.Bodies[0]!)["tipoRegistro"]!);
             Assert.Equal(1, (int)JObject.Parse(h.Bodies[1]!)["tipoRegistro"]!);
             Assert.Equal("123456", (string)JObject.Parse(h.Bodies[1]!)["idTransacao"]!);
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.Situacao);
             await banco.ConsultarAgendamentoAsync(m);
             Assert.Equal(HttpMethod.Get, h.Requests[2].Method);
             Assert.Contains("idTransacao=123456", h.Requests[2].RequestUri!.Query);
@@ -148,9 +148,9 @@ namespace BancoBr.Tests.Bradesco
             var banco = Conectar(h);
             var m = Movimento(new MovimentoItemPagamentoConvenioCodigoBarra { CodigoBarra = "8" + new string('0', 43) });
             var envio = await banco.EnviarAgendamentoAsync(m);
-            Assert.Equal(esperada, envio.SituacaoBancoBr);
+            Assert.Equal(esperada, envio.Situacao);
             var consulta = await banco.ConsultarAgendamentoAsync(envio);
-            Assert.Equal(esperada, consulta.SituacaoBancoBr);
+            Assert.Equal(esperada, consulta.Situacao);
         }
 
         [Theory]
@@ -192,13 +192,13 @@ namespace BancoBr.Tests.Bradesco
             var banco = Conectar(h);
             var m = Movimento(new MovimentoItemTransferenciaTED { Banco = 341, NumeroAgencia = 12, NumeroConta = 9876, DVConta = "5", CodigoFinalidadeTED = FinalidadeTEDEnum.CreditoEmConta });
             await banco.EnviarAgendamentoAsync(m);
-            Assert.Null(m.SituacaoBancoBr);
+            Assert.Null(m.Situacao);
             var body = JObject.Parse(h.Bodies[0]!);
             Assert.Equal(123456, (long)body["contaRemetenteComDigito"]!);
             Assert.Equal("0000", (string)body["numeroFilial"]!);
             await banco.ConsultarAgendamentoAsync(m);
             Assert.Equal(1234567, (long)JObject.Parse(h.Bodies[1]!)["numeroDocumento"]!);
-            Assert.Equal(BancoBrSituacaoEnum.Rejeitado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Rejeitado, m.Situacao);
         }
 
         [Theory]
@@ -299,7 +299,7 @@ namespace BancoBr.Tests.Bradesco
 
             Assert.Same(recuperado, resultado);
             Assert.Equal(identidade, resultado.NumeroDocumentoNoBanco);
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, resultado.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, resultado.Situacao);
             Assert.Equal(2, h.Requests.Count);
             Assert.EndsWith("/consulta/transferencia/" + identidade, h.Requests[1].RequestUri!.AbsolutePath);
         }
@@ -390,7 +390,7 @@ namespace BancoBr.Tests.Bradesco
             var consulta = JsonConvert.DeserializeObject<Movimento>(salvo)!;
             consulta.MovimentoItem = new MovimentoItemTransferenciaPIX();
             await banco.ConsultarAgendamentoAsync(consulta);
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, consulta.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, consulta.Situacao);
             Assert.EndsWith("/consulta/transferencia/123456", h.Requests[1].RequestUri!.AbsolutePath);
         }
 
@@ -435,7 +435,7 @@ namespace BancoBr.Tests.Bradesco
             var m = Movimento(new MovimentoItemPagamentoTituloCodigoBarra());
             m.NumeroDocumentoNoBanco = "123456";
             await Assert.ThrowsAsync<JsonSerializationException>(() => Conectar(h).CancelarAgendamentoAsync(m));
-            Assert.NotEqual(BancoBrSituacaoEnum.Cancelado, m.SituacaoBancoBr);
+            Assert.NotEqual(BancoBrSituacaoEnum.Cancelado, m.Situacao);
         }
 
         [Fact]
