@@ -65,7 +65,7 @@ namespace BancoBr.Tests.Bradesco
             Assert.Contains("Água e saneamento", texto);
             Assert.Contains("Autenticação bancária: 987654", texto);
             Assert.Contains("R$ 150,00", texto);
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, movimento.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, movimento.Situacao);
             Assert.Contains("idTransacao=123456", Assert.Single(handler.Requests).RequestUri!.Query);
         }
 
@@ -135,7 +135,7 @@ namespace BancoBr.Tests.Bradesco
             movimento.DataPagamento = DateTime.Today.AddDays(5);
             await Conectar(handler).ConsultarAgendamentoAsync(movimento);
             Assert.Contains("tipoConsulta=4", Assert.Single(handler.Requests).RequestUri!.Query);
-            Assert.Equal(BancoBrSituacaoEnum.Agendado, movimento.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Agendado, movimento.Situacao);
         }
 
         [Fact]
@@ -182,7 +182,7 @@ namespace BancoBr.Tests.Bradesco
             movimento.ValorPagamento = 150;
             movimento.MovimentoItem = new MovimentoItemPagamentoConvenioCodigoBarra { CodigoBarra = "8" + new string('0', 43) };
             await Conectar(handler).EnviarAgendamentoAsync(movimento);
-            Assert.Equal(BancoBrSituacaoEnum.Agendado, movimento.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Agendado, movimento.Situacao);
             Assert.Equal(2, handler.Bodies.Count);
             Assert.Equal(0, (int)JObject.Parse(handler.Bodies[0]!)["tipoRegistro"]!);
             Assert.Equal(1, (int)JObject.Parse(handler.Bodies[1]!)["tipoRegistro"]!);

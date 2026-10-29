@@ -37,10 +37,10 @@ dotnet add package BancoBr.CNAB   # integração via arquivos CNAB 240
 - [x] Sicoob
 - [x] Santander
 - [x] [Sicredi](src/BancoBr.API/Sicredi/README.md) — pagamentos, DDA, extrato e saldo; homologação pendente de credenciais
+- [x] [Banco do Brasil](src/BancoBr.API/BancoDoBrasil/README.md)
 - [x] [Itaú](src/BancoBr.API/Itau/README.md) — Pix, QR Code, consulta de pagamentos SISPAG, extrato e saldo; validado com HTTP simulado, homologação pendente
 - [x] [Bradesco](src/BancoBr.API/Bradesco/README.md) — boletos, contas e tributos, Pix, TED, saldo e extrato; saldo e extrato testados no sandbox, pagamentos com homologação pendente
 - [ ] CEF
-- [x] [Banco do Brasil](src/BancoBr.API/BancoDoBrasil/README.md)
 
 ### Conectando
 
@@ -101,7 +101,7 @@ Console.WriteLine($"Beneficiário: {movimento.Favorecido?.Nome}, Valor: {item.Va
 // dados (sem consultar de novo).
 await banco.EnviarAgendamentoAsync(movimento, idempotencyKey: Guid.NewGuid().ToString());
 
-Console.WriteLine($"Situação={movimento.SituacaoBancoBr}, IdPagamento={movimento.NumeroDocumentoNoBanco}");
+Console.WriteLine($"Situação={movimento.Situacao}, IdPagamento={movimento.NumeroDocumentoNoBanco}");
 ```
 
 ### Pix (transferência por chave)
@@ -121,7 +121,7 @@ var movimentoPix = new Movimento
 // EnviarAgendamentoAsync já inicia e confirma o pagamento numa única chamada.
 await banco.EnviarAgendamentoAsync(movimentoPix);
 
-Console.WriteLine($"Situação={movimentoPix.SituacaoBancoBr}, EndToEndId={movimentoPix.NumeroDocumentoNoBanco}");
+Console.WriteLine($"Situação={movimentoPix.Situacao}, EndToEndId={movimentoPix.NumeroDocumentoNoBanco}");
 
 // Santander e Sicredi: mesma chamada para obter o PDF, com o download resolvido pela biblioteca.
 // Bradesco: a mesma chamada gera o PDF para boleto e arrecadação 02/03; veja as limitações no guia do banco.
@@ -200,6 +200,8 @@ foreach (var transacao in extrato.Select(m => m.MovimentoItem).OfType<MovimentoI
     Console.WriteLine($"{transacao.Data:d} [{transacao.Tipo}] {transacao.Descricao}: {transacao.Valor:C}");
 }
 ```
+
+No Banco do Brasil, cada transação também preenche `DescricaoComplementarRetorno` com os códigos e descrições de histórico e sub-histórico recebidos. Veja o [mapeamento e exemplo do BB](src/BancoBr.API/BancoDoBrasil/README.md).
 
 </details>
 
