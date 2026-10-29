@@ -42,9 +42,9 @@ namespace BancoBr.API.Itau
             var status = (string)resposta["status_pagamento"];
             if (status == "Rejeitado" || status == "Nao incluido")
             {
-                movimento.SituacaoBancoBr = BancoBrSituacaoEnum.Rejeitado;
+                movimento.Situacao = BancoBrSituacaoEnum.Rejeitado;
                 var erro = ItauHttpGateway.Erro(resposta, 200, status);
-                movimento.DetalheRejeicaoBancoBr = erro.Message;
+                movimento.DetalheRejeicao = erro.Message;
                 throw erro;
             }
             if (status != "Sucesso" && status != "Sucesso (pre-autorizado)")
@@ -53,8 +53,8 @@ namespace BancoBr.API.Itau
             if (!Guid.TryParse(id, out _)) throw new JsonSerializationException("Inclusão Itaú sem cod_pagamento válido.");
             movimento.NumeroDocumentoNoBanco = id;
             // Sucesso na inclusão não confirma liquidação nem dispensa alçada no SISPAG.
-            movimento.SituacaoBancoBr = BancoBrSituacaoEnum.Agendado;
-            movimento.DetalheRejeicaoBancoBr = null;
+            movimento.Situacao = BancoBrSituacaoEnum.Agendado;
+            movimento.DetalheRejeicao = null;
             return movimento;
         }
 
@@ -145,13 +145,13 @@ namespace BancoBr.API.Itau
             var status = (string)dados["status"];
             switch (status)
             {
-                case "EF": case "Efetuado": case "Efetuados": m.SituacaoBancoBr = BancoBrSituacaoEnum.Efetivado; break;
-                case "AE": case "A Efetuar": case "A efetuar": m.SituacaoBancoBr = BancoBrSituacaoEnum.Agendado; break;
-                case "NE": case "Não Efetuado": case "Não efetuado": case "Não Efetuados": m.SituacaoBancoBr = BancoBrSituacaoEnum.Rejeitado; break;
-                default: m.SituacaoBancoBr = BancoBrSituacaoEnum.NaoIntegrado; break;
+                case "EF": case "Efetuado": case "Efetuados": m.Situacao = BancoBrSituacaoEnum.Efetivado; break;
+                case "AE": case "A Efetuar": case "A efetuar": m.Situacao = BancoBrSituacaoEnum.Agendado; break;
+                case "NE": case "Não Efetuado": case "Não efetuado": case "Não Efetuados": m.Situacao = BancoBrSituacaoEnum.Rejeitado; break;
+                default: m.Situacao = BancoBrSituacaoEnum.NaoIntegrado; break;
             }
             var motivos = dados["motivo_rejeicao"] as JArray;
-            m.DetalheRejeicaoBancoBr = motivos == null || motivos.Count == 0 ? null : string.Join("; ", motivos.Select(x =>
+            m.DetalheRejeicao = motivos == null || motivos.Count == 0 ? null : string.Join("; ", motivos.Select(x =>
                 x.Type == JTokenType.String ? (string)x : (string)x["codigo_motivo"] + ": " + (string)x["descricao_motivo"]));
             return m;
         }

@@ -36,11 +36,11 @@ dotnet add package BancoBr.CNAB   # integração via arquivos CNAB 240
 
 - [x] Sicoob
 - [x] Santander
-- [x] [Sicredi](src/BancoBr.API/Sicredi/README.md) — pagamentos, DDA, extrato e saldo; homologação pendente de credenciais
+- [x] [Sicredi](src/BancoBr.API/Sicredi/README.md)
+- [x] [Banco do Brasil](src/BancoBr.API/BancoDoBrasil/README.md)
 - [x] [Itaú](src/BancoBr.API/Itau/README.md) — Pix, QR Code, consulta de pagamentos SISPAG, extrato e saldo; validado com HTTP simulado, homologação pendente
 - [ ] Bradesco
 - [ ] CEF
-- [x] [Banco do Brasil](src/BancoBr.API/BancoDoBrasil/README.md)
 
 ### Conectando
 
@@ -101,7 +101,7 @@ Console.WriteLine($"Beneficiário: {movimento.Favorecido?.Nome}, Valor: {item.Va
 // dados (sem consultar de novo).
 await banco.EnviarAgendamentoAsync(movimento, idempotencyKey: Guid.NewGuid().ToString());
 
-Console.WriteLine($"Situação={movimento.SituacaoBancoBr}, IdPagamento={movimento.NumeroDocumentoNoBanco}");
+Console.WriteLine($"Situação={movimento.Situacao}, IdPagamento={movimento.NumeroDocumentoNoBanco}");
 ```
 
 ### Pix (transferência por chave)
@@ -121,7 +121,7 @@ var movimentoPix = new Movimento
 // EnviarAgendamentoAsync já inicia e confirma o pagamento numa única chamada.
 await banco.EnviarAgendamentoAsync(movimentoPix);
 
-Console.WriteLine($"Situação={movimentoPix.SituacaoBancoBr}, EndToEndId={movimentoPix.NumeroDocumentoNoBanco}");
+Console.WriteLine($"Situação={movimentoPix.Situacao}, EndToEndId={movimentoPix.NumeroDocumentoNoBanco}");
 
 // Santander e Sicredi: mesma chamada para obter o PDF, com o download resolvido pela biblioteca.
 // Se o pagamento ou o arquivo ainda não estiver pronto, retorna false: consulte novamente mais tarde.

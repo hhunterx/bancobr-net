@@ -61,7 +61,7 @@ namespace BancoBr.Tests.Itau
             Assert.Null(body["emv"]);
             Assert.Null(body["chave"]);
             Assert.Equal("qr-estavel", handler.Requests.Single().Headers.GetValues("idempotency-key").Single());
-            Assert.Equal(BancoBrSituacaoEnum.Agendado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Agendado, m.Situacao);
         }
 
         [Theory]
@@ -196,7 +196,7 @@ namespace BancoBr.Tests.Itau
             await Assert.ThrowsAsync<JsonSerializationException>(() => Conectar(handler).ConsultarAgendamentoAsync(m));
             Assert.Equal(100.50m, m.ValorPagamento);
             Assert.Equal(new DateTime(2026, 10, 29), m.DataPagamento);
-            Assert.Null(m.SituacaoBancoBr);
+            Assert.Null(m.Situacao);
             Assert.Null(m.Favorecido);
         }
     }

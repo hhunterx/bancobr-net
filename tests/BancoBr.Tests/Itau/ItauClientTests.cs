@@ -70,7 +70,7 @@ namespace BancoBr.Tests.Itau
             var banco = Conectar(handler);
             var m = Pix();
             Assert.Same(m, await banco.EnviarAgendamentoAsync(m, "chave-erp"));
-            Assert.Equal(BancoBrSituacaoEnum.Agendado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Agendado, m.Situacao);
             Assert.Equal(Id, m.NumeroDocumentoNoBanco);
             var corpo = JObject.Parse(handler.Bodies[0]!);
             Assert.Equal(123.40m, (decimal)corpo["valor_pagamento"]!);
@@ -87,7 +87,7 @@ namespace BancoBr.Tests.Itau
             await banco.EnviarAgendamentoAsync(m, "outra-chave");
             Assert.Equal(HttpMethod.Get, handler.Requests[1].Method);
             Assert.EndsWith("/pagamentos_sispag/" + Id, handler.Requests[1].RequestUri!.AbsoluteUri);
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.Situacao);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ namespace BancoBr.Tests.Itau
             var handler = new SequencedFakeHttpMessageHandler((HttpStatusCode.OK, Detalhe(status)));
             var m = Pix(); m.NumeroDocumentoNoBanco = Id;
             await Conectar(handler).ConsultarAgendamentoAsync(m);
-            Assert.Equal(esperado, m.SituacaoBancoBr);
+            Assert.Equal(esperado, m.Situacao);
         }
 
         [Theory]
@@ -168,7 +168,7 @@ namespace BancoBr.Tests.Itau
             var handler = new SequencedFakeHttpMessageHandler((HttpStatusCode.OK, body));
             var m = Pix(); m.NumeroDocumentoNoBanco = Id;
             await Conectar(handler).ConsultarAgendamentoAsync(m);
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.Situacao);
         }
 
         [Theory]
@@ -312,7 +312,7 @@ namespace BancoBr.Tests.Itau
             m.MovimentoItem = modalidade == "boleto" ? new MovimentoItemPagamentoTituloCodigoBarra() :
                 modalidade == "convenio" ? new MovimentoItemPagamentoConvenioCodigoBarra() : new MovimentoItemTransferenciaTED();
             Assert.Same(m, await Conectar(handler).ConsultarAgendamentoAsync(m));
-            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.SituacaoBancoBr);
+            Assert.Equal(BancoBrSituacaoEnum.Efetivado, m.Situacao);
             Assert.Single(handler.Requests);
         }
 
@@ -323,7 +323,7 @@ namespace BancoBr.Tests.Itau
             var handler = new SequencedFakeHttpMessageHandler((HttpStatusCode.OK, body.ToString()));
             var m = Pix(); m.NumeroDocumentoNoBanco = Id;
             await Assert.ThrowsAsync<JsonSerializationException>(() => Conectar(handler).ConsultarAgendamentoAsync(m));
-            Assert.Null(m.SituacaoBancoBr);
+            Assert.Null(m.Situacao);
         }
 
         [Fact]
