@@ -74,7 +74,7 @@ await banco.EnviarAgendamentoAsync(movimento, idempotencyKey: chavePersistida);
 await banco.ConsultarAgendamentoAsync(movimento);
 ```
 
-O envio direto não faz resolução prévia de chave. `Sucesso` e `Sucesso (pre-autorizado)` significam inclusão aceita e deixam `SituacaoBancoBr = Agendado`; somente a consulta confirma `Efetivado`. Guarde `NumeroDocumentoNoBanco`, preenchido com `cod_pagamento`, para as consultas seguintes. Com esse id preenchido, um novo envio apenas consulta o pagamento existente.
+O envio direto não faz resolução prévia de chave. `Sucesso` e `Sucesso (pre-autorizado)` significam inclusão aceita e deixam `Situacao = Agendado`; somente a consulta confirma `Efetivado`. Guarde `NumeroDocumentoNoBanco`, preenchido com `cod_pagamento`, para as consultas seguintes. Com esse id preenchido, um novo envio apenas consulta o pagamento existente.
 
 A chave de idempotência aceita até 255 caracteres ASCII imprimíveis. Quando omitida, a biblioteca usa `NumeroDocumento`; ele deve ser único por pagamento. Não gere uma chave nova após timeout. A biblioteca conserva corpo/chave nas tentativas do mesmo objeto e rejeita alteração dos dados antes de reenviá-lo. Após reiniciar a aplicação ou recriar a conexão, a preservação depende da chave e dos dados salvos pelo consumidor. Não há recuperação automática por idempotência nesta integração.
 
