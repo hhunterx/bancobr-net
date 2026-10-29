@@ -72,6 +72,8 @@ namespace BancoBr.API
 
             switch (banco)
             {
+                case BancoEnum.Itau:
+                    return ConectarItau(configuracao, tokenEndpointOverride, null);
                 case BancoEnum.Sicredi:
                     return ConectarSicredi(configuracao, tokenEndpointOverride, null);
                 case BancoEnum.BancoDoBrasil:
@@ -117,6 +119,8 @@ namespace BancoBr.API
 
             switch (banco)
             {
+                case BancoEnum.Itau:
+                    return ConectarItau(configuracao, null, tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider)));
                 case BancoEnum.Sicredi:
                     return ConectarSicredi(configuracao, null, tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider)));
                 case BancoEnum.BancoDoBrasil:
@@ -144,6 +148,33 @@ namespace BancoBr.API
                 default:
                     throw new Exception($"Banco não implementado: {configuracao.Correntista.Banco}!");
             }
+        }
+
+        /// <summary>Conecta Pix SISPAG e Account Statement sem modificar os contratos de domínio.</summary>
+        internal static BancoApi ConectarItau(ConfiguracaoAPI config, Uri endpoint, IAccessTokenProvider tokens, HttpClient httpClient = null)
+        {
+            if (string.IsNullOrWhiteSpace(config.ClientId)) throw new ArgumentException("Informe ClientId do Itaú.", nameof(config));
+            if (httpClient == null && config.CertificadoDigital == null)
+                throw new ArgumentException("Informe o certificado dinâmico mTLS do Itaú.", nameof(config));
+            if (tokens == null && string.IsNullOrWhiteSpace(config.ClientSecret))
+                throw new ArgumentException("Informe ClientSecret ou um IAccessTokenProvider para a credencial Itaú.", nameof(config));
+            var http = httpClient ?? Itau.ItauHttpGateway.CriarHttpClient(config.CertificadoDigital);
+            Func<Uri, IAccessTokenProvider> autenticar = tokenEndpoint => tokens ?? new OAuthTokenProvider(http, new OAuthTokenProviderOptions
+            {
+                TokenEndpoint = endpoint ?? tokenEndpoint, ClientId = config.ClientId, ClientSecret = config.ClientSecret
+            });
+            var pagamentos = new Itau.ItauHttpGateway(http, autenticar(new Uri(config.AmbienteHomologacao
+                ? "https://api.itau.com.br/sandbox/api/oauth/token" : "https://sts.itau.com.br/api/oauth/token")),
+                new Uri(config.AmbienteHomologacao ? "https://sandbox.devportal.itau.com.br/itau-ep9-gtw-sispag-ext/v1/"
+                    : "https://api.gateway.itau.com.br/sispag/v1/"), config.ClientId);
+            var conta = new Itau.ExtratoClient(new Itau.ItauHttpGateway(http, autenticar(new Uri(config.AmbienteHomologacao
+                ? "https://sts.rdhi.com.br/api/oauth/token" : "https://sts.itau.com.br/api/oauth/token")),
+                new Uri(config.AmbienteHomologacao ? "https://account-statement.api.hom.itau.com/account-statement/v1/"
+                    : "https://account-statement.api.itau.com/account-statement/v1/")), config.Correntista);
+            var pix = new Itau.PagamentoPixClient(pagamentos, config.Correntista);
+            return new BancoApi(config.Correntista, new Itau.ConsultaBoletoClient(pix, config.Correntista),
+                new Itau.ConsultaConvenioClient(pix, config.Correntista), pix,
+                new Itau.ConsultaTedClient(pix, config.Correntista), conta, saldo: conta, pagamentoDireto: pix);
         }
 
         internal static BancoApi ConectarSicredi(ConfiguracaoAPI config, Uri endpoint, IAccessTokenProvider tokens, HttpClient httpClient = null)
@@ -239,6 +270,8 @@ namespace BancoBr.API
             => Requer(_workspace).ObterOuCriarWorkspaceAsync(cancellationToken);
 
         /// <summary>
+        /// No Itaú, inclui Pix/QR Code diretamente no SISPAG. Informe data, valor e uma identidade
+        /// estável em idempotencyKey ou NumeroDocumento; sucesso de inclusão ainda não é liquidação.
         /// No Sicredi, o envio é direto, sem consulta prévia: informe data, valor e NumeroDocumento.
         /// Preserve idempotencyKey nos reenvios; a aceitação ainda depende de processamento/aprovação.
         /// Com NumeroDocumentoNoBanco preenchido, o Sicredi consulta o pagamento existente sem criar outro.
@@ -295,6 +328,8 @@ namespace BancoBr.API
         }
 
         /// <summary>
+        /// No Itaú, consulta pagamento existente pelo id SISPAG em NumeroDocumentoNoBanco;
+        /// não há consulta prévia de código de barras ou chave Pix nesta integração.
         /// No Sicredi, a consulta exige o idTransacao em NumeroDocumentoNoBanco; não existe consulta prévia por código/chave.
         /// Consulta o movimento. Antes do envio (<see cref="Movimento.NumeroDocumentoNoBanco"/>
         /// ainda vazio), é a consulta prévia — pra exibir dados ao usuário antes de confirmar o
@@ -352,6 +387,7 @@ namespace BancoBr.API
         }
 
         /// <summary>
+        /// Itaú não oferece cancelamento nos endpoints SISPAG consultados; lança NotSupportedException.
         /// No Sicredi, cancela boleto, tributo com barras ou Pix agendado pelo idTransacao.
         /// Cancela o agendamento do movimento. Só Boleto e TED têm cancelamento na API do
         /// Sicoob — para Pix e Convênio, lança <see cref="NotSupportedException"/>.

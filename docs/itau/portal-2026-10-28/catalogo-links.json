@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-pix-recebimentos-ext-v2"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-boletos-boletos-v3-ext-aws"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-qrcode-pix-automatico-v1-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-extrato-v1-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-sispag-ext"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ng7-api-pixautomatico-v1-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-saque-troco-v1-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-regulatorio-pix-v2-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-cash-management-ext-v2"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-recebimentos-v1-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-conciliacao-v1-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-vw9-api-account-statement-v1-externo"
+  },
+  {
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-boleto-v1-externo"
+  }
+]

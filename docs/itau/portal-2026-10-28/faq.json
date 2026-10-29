@@ -1,0 +1,61 @@
+[
+  {
+    "slug": "faq-sandbox",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-6-container",
+    "characters": 6810
+  },
+  {
+    "slug": "faq-1",
+    "name": "portal do desenvolvedor",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-1-container",
+    "characters": 7486
+  },
+  {
+    "slug": "faq-2",
+    "name": "Open Finance",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-2-container",
+    "characters": 7468
+  },
+  {
+    "slug": "faq-3",
+    "name": "Transferência de arquivos",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-3-container",
+    "characters": 9054
+  },
+  {
+    "slug": "faq-4",
+    "name": "Pix",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-4-container",
+    "characters": 14675
+  },
+  {
+    "slug": "faq-5",
+    "name": "Pix Indireto",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-5-container",
+    "characters": 3883
+  },
+  {
+    "slug": "faq-7",
+    "name": "Corban",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-7-container",
+    "characters": 4980
+  },
+  {
+    "slug": "faq-8",
+    "name": "Banco Liquidante",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-8-container",
+    "characters": 2365
+  },
+  {
+    "slug": "faq-9",
+    "name": "Nova Experiência",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-9-container",
+    "characters": 8738
+  },
+  {
+    "slug": "faq-10",
+    "name": "Cadeia de certificados",
+    "url": "https://devportal.itau.com.br/suportefaq#accordion-10-container",
+    "characters": 6840
+  }
+]

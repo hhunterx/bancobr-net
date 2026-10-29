@@ -1,0 +1,143 @@
+[
+  {
+    "slug": "autenticacao-documentacao",
+    "url": "https://devportal.itau.com.br/autenticacao-documentacao",
+    "characters": 15933,
+    "status": "capturado",
+    "files": [
+      "paginas/autenticacao-documentacao.guia.html",
+      "paginas/autenticacao-documentacao.guia.txt"
+    ]
+  },
+  {
+    "slug": "certificado-dinamico",
+    "url": "https://devportal.itau.com.br/certificado-dinamico",
+    "characters": 15594,
+    "status": "capturado",
+    "files": [
+      "paginas/certificado-dinamico.guia.html",
+      "paginas/certificado-dinamico.guia.txt"
+    ]
+  },
+  {
+    "slug": "primeira-chamada",
+    "url": "https://devportal.itau.com.br/como-fazer-a-primeira-chamada-a-uma-api",
+    "characters": 2690,
+    "status": "capturado",
+    "files": [
+      "paginas/primeira-chamada.guia.html",
+      "paginas/primeira-chamada.guia.txt"
+    ]
+  },
+  {
+    "slug": "certificados-2026",
+    "url": "https://devportal.itau.com.br/certificados-apis-expiracao-2026",
+    "characters": 8251,
+    "status": "capturado",
+    "files": [
+      "paginas/certificados-2026.guia.html",
+      "paginas/certificados-2026.guia.txt"
+    ]
+  },
+  {
+    "slug": "conheca-o-portal",
+    "url": "https://devportal.itau.com.br/conheca-o-portal",
+    "characters": 4194,
+    "status": "capturado",
+    "files": [
+      "paginas/conheca-o-portal.guia.html",
+      "paginas/conheca-o-portal.guia.txt"
+    ]
+  },
+  {
+    "slug": "duvidas-frequentes",
+    "url": "https://devportal.itau.com.br/suportefaq",
+    "characters": 414,
+    "status": "capturado",
+    "files": [
+      "paginas/duvidas-frequentes.guia.html",
+      "paginas/duvidas-frequentes.guia.txt"
+    ]
+  },
+  {
+    "slug": "sandbox-como-comecar",
+    "url": "https://devportal.itau.com.br/sandbox-como-comecar",
+    "characters": 8097,
+    "status": "capturado",
+    "files": [
+      "paginas/sandbox-como-comecar.guia.html",
+      "paginas/sandbox-como-comecar.guia.txt"
+    ]
+  },
+  {
+    "slug": "boas-praticas-credenciais",
+    "url": "https://devportal.itau.com.br/boas-praticas-para-o-uso-de-credenciais",
+    "characters": 3011,
+    "status": "capturado",
+    "files": [
+      "paginas/boas-praticas-credenciais.guia.html",
+      "paginas/boas-praticas-credenciais.guia.txt"
+    ]
+  },
+  {
+    "slug": "como-se-conectar",
+    "url": "https://devportal.itau.com.br/como-se-conectar-as-apis-itau",
+    "characters": 1961,
+    "status": "capturado",
+    "files": [
+      "paginas/como-se-conectar.guia.html",
+      "paginas/como-se-conectar.guia.txt"
+    ]
+  },
+  {
+    "slug": "conceitos",
+    "url": "https://devportal.itau.com.br/conceitos",
+    "characters": 7711,
+    "status": "capturado",
+    "files": [
+      "paginas/conceitos.guia.html",
+      "paginas/conceitos.guia.txt"
+    ]
+  },
+  {
+    "slug": "pre-requisitos",
+    "url": "https://devportal.itau.com.br/pre-requisitos-para-se-conectar-ao-ambiente-itau",
+    "characters": 4178,
+    "status": "capturado",
+    "files": [
+      "paginas/pre-requisitos.guia.html",
+      "paginas/pre-requisitos.guia.txt"
+    ]
+  },
+  {
+    "slug": "certificado-credenciais",
+    "url": "https://devportal.itau.com.br/certificado-dinamico-credenciais",
+    "characters": 130,
+    "status": "404",
+    "error": "Link oficial retornou página não encontrada; captura preservada como evidência.",
+    "files": [
+      "paginas/certificado-credenciais.guia.html",
+      "paginas/certificado-credenciais.guia.txt"
+    ]
+  },
+  {
+    "slug": "certificado-demais-produtos",
+    "url": "https://devportal.itau.com.br/certificado-dinamico-demais-produtos",
+    "characters": 37003,
+    "status": "capturado",
+    "files": [
+      "paginas/certificado-demais-produtos.guia.html",
+      "paginas/certificado-demais-produtos.guia.txt"
+    ]
+  },
+  {
+    "slug": "tutorial-cadeia-certificados",
+    "url": "https://devportal.itau.com.br/tutorial-cadeia-de-certificados",
+    "characters": 15468,
+    "status": "capturado",
+    "files": [
+      "paginas/tutorial-cadeia-certificados.guia.html",
+      "paginas/tutorial-cadeia-certificados.guia.txt"
+    ]
+  }
+]
