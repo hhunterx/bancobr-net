@@ -37,7 +37,7 @@ dotnet add package BancoBr.CNAB   # integração via arquivos CNAB 240
 - [x] Sicoob
 - [x] Santander
 - [x] [Sicredi](src/BancoBr.API/Sicredi/README.md) — pagamentos, DDA, extrato e saldo; homologação pendente de credenciais
-- [ ] Itaú
+- [x] [Itaú](src/BancoBr.API/Itau/README.md) — Pix, QR Code, consulta de pagamentos SISPAG, extrato e saldo; validado com HTTP simulado, homologação pendente
 - [x] [Bradesco](src/BancoBr.API/Bradesco/README.md) — boletos, contas e tributos, Pix, TED, saldo e extrato; saldo e extrato testados no sandbox, pagamentos com homologação pendente
 - [ ] CEF
 - [x] [Banco do Brasil](src/BancoBr.API/BancoDoBrasil/README.md)

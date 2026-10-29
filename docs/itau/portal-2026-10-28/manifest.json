@@ -1,0 +1,1163 @@
+[
+  {
+    "slug": "itau-ep9-gtw-sispag-ext",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-sispag-ext?tab=especificacaoTecnica",
+    "files": [
+      "originais/itau-ep9-gtw-sispag-ext.openapi.json",
+      "originais/itau-ep9-gtw-sispag-ext.postman.json"
+    ],
+    "errors": [],
+    "title": "API Cash Management",
+    "version": "1.14.30",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "POST",
+        "path": "/transferencias"
+      },
+      {
+        "method": "GET",
+        "path": "/pagamentos_sispag"
+      },
+      {
+        "method": "GET",
+        "path": "/pagamentos_sispag/{id_pagamento_sispag}"
+      }
+    ],
+    "pathCount": 3,
+    "pages": [
+      "paginas/itau-ep9-gtw-sispag-ext.api-reference.html",
+      "paginas/itau-ep9-gtw-sispag-ext.api-reference.txt",
+      "paginas/itau-ep9-gtw-sispag-ext.informacoes-adicionais.html",
+      "paginas/itau-ep9-gtw-sispag-ext.informacoes-adicionais.txt",
+      "paginas/itau-ep9-gtw-sispag-ext.visao-geral.html",
+      "paginas/itau-ep9-gtw-sispag-ext.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-gtw-sispag-ext.openapi.json": "9b9fc2cc3ee73a44af70feeeb4e961b4d32f729882e53c1b3e9015b3d5acf6c6",
+      "originais/itau-ep9-gtw-sispag-ext.postman.json": "3ffef110cc362dc1a678ca96c043c644025fa86ab09f60019b3741ae6a55a4d8",
+      "paginas/itau-ep9-gtw-sispag-ext.api-reference.html": "f312f8a711d42d3257fb50de9b1bef60c9a3a0dfd897bfaf05b949b973d1b5c8",
+      "paginas/itau-ep9-gtw-sispag-ext.api-reference.txt": "c16bd8c62bccd7729763ba2c5d6c12739b743e5ac3b434308ff3b517539ca2e8",
+      "paginas/itau-ep9-gtw-sispag-ext.informacoes-adicionais.html": "2e5bd6f132f207fbed601c7c5820a67c19109ca463a1e712396640e6d51cd7ab",
+      "paginas/itau-ep9-gtw-sispag-ext.informacoes-adicionais.txt": "2ea8d01f14b0f751337722b23f027788ac6db3dcc19af7a23c4d17eabb9c2577",
+      "paginas/itau-ep9-gtw-sispag-ext.visao-geral.html": "4b6cc712adcb64160477dd765a39e01eb8440f531a9cb180149ca80895bd06d1",
+      "paginas/itau-ep9-gtw-sispag-ext.visao-geral.txt": "183ccb4ef681394fba8adfb2d8a8bcdbc8918b26f6896f4af06fce1b9f1c9fd6"
+    }
+  },
+  {
+    "slug": "itau-ep9-api-boleto-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-boleto-v1-externo",
+    "files": [
+      "originais/itau-ep9-api-boleto-v1-externo.openapi.json",
+      "originais/itau-ep9-api-boleto-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 4663,
+    "title": "API Boletos",
+    "additionalCharacters": 19364,
+    "version": "1.18.0",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/boletos"
+      },
+      {
+        "method": "POST",
+        "path": "/boletos"
+      },
+      {
+        "method": "GET",
+        "path": "/requisicoes-boletos-negociados/{requisicaoBoletoNegociadoId}"
+      },
+      {
+        "method": "GET",
+        "path": "/ativos-financeiros"
+      },
+      {
+        "method": "GET",
+        "path": "/documentos"
+      },
+      {
+        "method": "GET",
+        "path": "/documentos/{documentoId}"
+      }
+    ],
+    "pathCount": 5,
+    "pages": [
+      "paginas/itau-ep9-api-boleto-v1-externo.api-reference.html",
+      "paginas/itau-ep9-api-boleto-v1-externo.api-reference.txt",
+      "paginas/itau-ep9-api-boleto-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-ep9-api-boleto-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-ep9-api-boleto-v1-externo.visao-geral.html",
+      "paginas/itau-ep9-api-boleto-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-api-boleto-v1-externo.openapi.json": "535c0a9ca6320fb56aae47019bd8070ec6e368623f5126924189345e6869a4d0",
+      "originais/itau-ep9-api-boleto-v1-externo.postman.json": "e16f5a79e5ed01dd747ddb628c85b42c9839e858a65553a901539204c7bdde0e",
+      "paginas/itau-ep9-api-boleto-v1-externo.api-reference.html": "d6f8a354757be4ea90017f9fc01a422769b0cf4864c2cfd0b3c130d488626875",
+      "paginas/itau-ep9-api-boleto-v1-externo.api-reference.txt": "4c9c902466a761825016cc61bfb1789b48d806c57b679c824b9208362e5f659d",
+      "paginas/itau-ep9-api-boleto-v1-externo.informacoes-adicionais.html": "2b89d05639049e579c7630215918373b800ec8046a7f2be860783b7e522f517d",
+      "paginas/itau-ep9-api-boleto-v1-externo.informacoes-adicionais.txt": "587bd6f5ff9f03a40a593430f1e8ec3921b86d6fde495dac208b08ecf384ac7f",
+      "paginas/itau-ep9-api-boleto-v1-externo.visao-geral.html": "27b6674a44db8bedb9d8b4517d1b21e594856ef3375b1ffc0dbe73a9eaf0648b",
+      "paginas/itau-ep9-api-boleto-v1-externo.visao-geral.txt": "12e835ec5e598a733969ae122975e872d11fb4fce078f89c72e8f4b34e98697a"
+    }
+  },
+  {
+    "slug": "itau-vw9-api-account-statement-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-vw9-api-account-statement-v1-externo",
+    "files": [
+      "originais/itau-vw9-api-account-statement-v1-externo.openapi.json",
+      "originais/itau-vw9-api-account-statement-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 2281,
+    "title": "API ACCOUNT STATEMENT",
+    "additionalCharacters": 39813,
+    "version": "1.33.0",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/statements/{statementId}"
+      },
+      {
+        "method": "GET",
+        "path": "/statements/{statementId}/interest-bearing-accounts"
+      },
+      {
+        "method": "GET",
+        "path": "/statements/{statementId}/judicial-orders"
+      },
+      {
+        "method": "GET",
+        "path": "/balances"
+      },
+      {
+        "method": "GET",
+        "path": "/statements/{statementId}/investment-balances"
+      },
+      {
+        "method": "GET",
+        "path": "/accounts-receivable"
+      }
+    ],
+    "pathCount": 6,
+    "pages": [
+      "paginas/itau-vw9-api-account-statement-v1-externo.api-reference.html",
+      "paginas/itau-vw9-api-account-statement-v1-externo.api-reference.txt",
+      "paginas/itau-vw9-api-account-statement-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-vw9-api-account-statement-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-vw9-api-account-statement-v1-externo.visao-geral.html",
+      "paginas/itau-vw9-api-account-statement-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-vw9-api-account-statement-v1-externo.openapi.json": "09db755cfd83ee76af007757b7b2de5168a9f374887807112ef5d330d8d3723c",
+      "originais/itau-vw9-api-account-statement-v1-externo.postman.json": "90f611dcf15a7cb28464e4f8fa1979d0fc5343983b85b5aaa04ecc7fe069052c",
+      "paginas/itau-vw9-api-account-statement-v1-externo.api-reference.html": "6b7773d9c9aad45f719b6cb38eb7ba009b7343da6ae5012e7410ba3db368a4fa",
+      "paginas/itau-vw9-api-account-statement-v1-externo.api-reference.txt": "ddfe1cde698237467cb49b0aebfa384853fca949a53e7da9485ecb2d21c9e692",
+      "paginas/itau-vw9-api-account-statement-v1-externo.informacoes-adicionais.html": "b255e08ee40a19aedf1dfb6c1c2c3678a6163e5add73ff4fe9414c90e0d5fd63",
+      "paginas/itau-vw9-api-account-statement-v1-externo.informacoes-adicionais.txt": "6c228a990a41725d98fa458b5436b0d36559e1492aaaa7357b4a55045ba17668",
+      "paginas/itau-vw9-api-account-statement-v1-externo.visao-geral.html": "af86a1d13527be96613a5a0a4e9bbc42dd14edea4140d1283ed5ff3d1430aea4",
+      "paginas/itau-vw9-api-account-statement-v1-externo.visao-geral.txt": "89f912cd5f23c2c060dcd3057dca6d81f1ab3f389725a98f0bec2aa36ea219a4"
+    }
+  },
+  {
+    "slug": "itau-ep9-gtw-pix-recebimentos-ext-v2",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-pix-recebimentos-ext-v2",
+    "files": [
+      "originais/itau-ep9-gtw-pix-recebimentos-ext-v2.openapi.json",
+      "originais/itau-ep9-gtw-pix-recebimentos-ext-v2.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 16521,
+    "title": "EM DESATIVAÇÃO- APIs Regulatórias Pix Recebimentos",
+    "additionalCharacters": 43975,
+    "version": "2.69.56",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": true,
+    "operations": [
+      {
+        "method": "PUT",
+        "path": "/cob/{txid}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cob/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cob/{txid}"
+      },
+      {
+        "method": "POST",
+        "path": "/cob"
+      },
+      {
+        "method": "GET",
+        "path": "/cob"
+      },
+      {
+        "method": "GET",
+        "path": "/cob/{txid}/qrcode"
+      },
+      {
+        "method": "PUT",
+        "path": "/cobv/{txid}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cobv/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobv/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobv"
+      },
+      {
+        "method": "GET",
+        "path": "/cobv/{txid}/qrcode"
+      },
+      {
+        "method": "PUT",
+        "path": "/lotecobv/{id}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/lotecobv/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/lotecobv/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/lotecobv"
+      },
+      {
+        "method": "POST",
+        "path": "/loc"
+      },
+      {
+        "method": "GET",
+        "path": "/loc"
+      },
+      {
+        "method": "GET",
+        "path": "/loc/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/loc/{id}/txid"
+      },
+      {
+        "method": "GET",
+        "path": "/pix/{e2eid}"
+      },
+      {
+        "method": "GET",
+        "path": "/pix"
+      },
+      {
+        "method": "PUT",
+        "path": "/pix/{e2eid}/devolucao/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/pix/{e2eid}/devolucao/{id}"
+      },
+      {
+        "method": "PUT",
+        "path": "/webhook/{chave}"
+      },
+      {
+        "method": "GET",
+        "path": "/webhook/{chave}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/webhook/{chave}"
+      },
+      {
+        "method": "GET",
+        "path": "/webhook"
+      }
+    ],
+    "pathCount": 16,
+    "pages": [
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.api-reference.html",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.api-reference.txt",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.informacoes-adicionais.html",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.informacoes-adicionais.txt",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.visao-geral.html",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-gtw-pix-recebimentos-ext-v2.openapi.json": "2dfb9d47e5baf0d96e30aee345208aaec859ac3b7b1c57d7676864a93e640661",
+      "originais/itau-ep9-gtw-pix-recebimentos-ext-v2.postman.json": "ae4181bbd1f8e0cce7e110b59f472b9d9fcfc0ef74e568c34d301da9f0e1483b",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.api-reference.html": "893adec17c39d3aa5c1aa78f07e670cbbaeebd2d2392f7800dcff291f04095c5",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.api-reference.txt": "a0676218ff753a5894aa5ee216909addf753de94d0427b7846d524f978a8d245",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.informacoes-adicionais.html": "40d780738cde9abd72fb0f9e6d6bc81a34f742444cfff8a6de22caca3bcd5cdf",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.informacoes-adicionais.txt": "cf31dc37e5a5282b89ea84603bd019a64b965fddfab5a7cabb2e18e51110ee86",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.visao-geral.html": "c2edca8d1e80d46574adbb541ae9fa1a2ad21de02834f369045fc2f0bea5f735",
+      "paginas/itau-ep9-gtw-pix-recebimentos-ext-v2.visao-geral.txt": "0908762980b51c1b661b391869ae5b8f296c814df57cf23421469f3b36e0bfde"
+    }
+  },
+  {
+    "slug": "itau-ep9-gtw-boletos-boletos-v3-ext-aws",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-boletos-boletos-v3-ext-aws",
+    "files": [
+      "originais/itau-ep9-gtw-boletos-boletos-v3-ext-aws.openapi.json",
+      "originais/itau-ep9-gtw-boletos-boletos-v3-ext-aws.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 1471,
+    "title": "API Boletos (v3)",
+    "additionalCharacters": 51906,
+    "version": "1.34.1",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/francesas"
+      },
+      {
+        "method": "GET",
+        "path": "/francesas/{id_francesa}/movimentacoes"
+      },
+      {
+        "method": "GET",
+        "path": "/francesas/{id_francesa}/movimentacoes_resumidas"
+      },
+      {
+        "method": "POST",
+        "path": "/notificacoes_boletos"
+      },
+      {
+        "method": "GET",
+        "path": "/notificacoes_boletos"
+      },
+      {
+        "method": "DELETE",
+        "path": "/notificacoes_boletos/{id_notificacao_boleto}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/notificacoes_boletos/{id_notificacao_boleto}"
+      }
+    ],
+    "pathCount": 5,
+    "pages": [
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.api-reference.html",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.api-reference.txt",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.informacoes-adicionais.html",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.informacoes-adicionais.txt",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.visao-geral.html",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-gtw-boletos-boletos-v3-ext-aws.openapi.json": "c97febfb6669ce18272e1aca13499a3a23c65bab24e82031f4f372b3f89dddc4",
+      "originais/itau-ep9-gtw-boletos-boletos-v3-ext-aws.postman.json": "eb9bd4fb9cb0757139be50ed49d55cfaa63a0077332c54fee1b291abec71c208",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.api-reference.html": "8286e44c283347106c47be253744f4200ef7865ac5617c1b7f43212288159a46",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.api-reference.txt": "fe5a0211a748e1bfb96fa233ecfcb5e448817cf4ba2e35410584c86345e696a9",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.informacoes-adicionais.html": "6cb2306258afb6b77725d52ae2ed22ae180bb2d1ca9d7a205a6f5acd129a9184",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.informacoes-adicionais.txt": "e02aedf71ef33d8d8670635c9bfbc8d27a9a441b648f5937c31a2c13673ac06c",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.visao-geral.html": "17a519744876cce108830fe7093515d32bfb25403d0a87187c37c525329ad53e",
+      "paginas/itau-ep9-gtw-boletos-boletos-v3-ext-aws.visao-geral.txt": "fd12d69398140bf3d35345abbc4156b6c5143dc7c4ca2ec4c8530c30bb507d3e"
+    }
+  },
+  {
+    "slug": "itau-ep9-api-qrcode-pix-automatico-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-qrcode-pix-automatico-v1-externo",
+    "files": [
+      "originais/itau-ep9-api-qrcode-pix-automatico-v1-externo.openapi.json",
+      "originais/itau-ep9-api-qrcode-pix-automatico-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 3229,
+    "title": "API - Emissão de QR Code Pix Automático",
+    "additionalCharacters": 1211,
+    "version": "1.28.10",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "POST",
+        "path": "/cobrancas"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cobrancas/{cobrancaId}"
+      }
+    ],
+    "pathCount": 2,
+    "pages": [
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.api-reference.html",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.api-reference.txt",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.visao-geral.html",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-api-qrcode-pix-automatico-v1-externo.openapi.json": "693b244f640c72d831f55d2268f508eb2898a70453237a713482151f2eb60390",
+      "originais/itau-ep9-api-qrcode-pix-automatico-v1-externo.postman.json": "e7733edd59dce0374980cbff08dcc42ae7afea8fa875ebdbd0a160801da09eb3",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.api-reference.html": "c522fcabcbc8d03010d5551c3caf4dd4247c27edadb58e16f2e7e797cd568963",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.api-reference.txt": "4407611702eef6ed68ff5b88b74eebdfa4381cfe1f22c01fb572ad3583b076da",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.informacoes-adicionais.html": "3b24375b0955e625f56b1ebf38264b5ed887097957c339835c62f347e1bdc4c3",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.informacoes-adicionais.txt": "93a61842f64bdf838904bef44392ae52f078861831542f4f75cbe7ed2e9db858",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.visao-geral.html": "d60cacaa3f959d6a50d961d3c77f3aba4f79c27705ce1dd6f4366b39f31ef50c",
+      "paginas/itau-ep9-api-qrcode-pix-automatico-v1-externo.visao-geral.txt": "3b156c4d73d179bff4b00d1799679ccac8608cb322513034ab4049fb341fa670"
+    }
+  },
+  {
+    "slug": "itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext",
+    "files": [
+      "originais/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.openapi.json",
+      "originais/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 16021,
+    "title": "EM DESATIVAÇÃO- itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext",
+    "additionalCharacters": 41208,
+    "version": "2.148.7",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": true,
+    "operations": [
+      {
+        "method": "POST",
+        "path": "/decodificacoes_qrcode"
+      },
+      {
+        "method": "POST",
+        "path": "/leituras_qrcodes_pix"
+      },
+      {
+        "method": "POST",
+        "path": "/cobrancas_imediata_pix"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cobrancas_imediata_pix/{id_cobranca_imediata_pix}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobrancas_imediata_pix/{id_cobranca_imediata_pix}/qrcode"
+      },
+      {
+        "method": "POST",
+        "path": "/cobrancas_vencimento_pix"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cobrancas_vencimento_pix/{id_cobranca_vencimento_pix}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobrancas_vencimento_pix/{id_cobranca_vencimento_pix}/qrcode"
+      },
+      {
+        "method": "POST",
+        "path": "/cobrancas_estatico_pix"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cobrancas_estatico_pix/{id_cobranca_estatico_pix}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobrancas_estatico_pix/{id_cobranca_estatico_pix}/qrcode"
+      },
+      {
+        "method": "GET",
+        "path": "/lancamentos_pix"
+      },
+      {
+        "method": "GET",
+        "path": "/lancamentos_pix/{id_lancamento_pix}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/estabelecimento_saque_troco_pix"
+      },
+      {
+        "method": "GET",
+        "path": "/estabelecimento_saque_troco_pix"
+      },
+      {
+        "method": "POST",
+        "path": "/estabelecimento_saque_troco_pix"
+      },
+      {
+        "method": "PATCH",
+        "path": "/estabelecimento_saque_troco_pix/{ponto_atendimento_id}"
+      },
+      {
+        "method": "POST",
+        "path": "/boletos_pix"
+      }
+    ],
+    "pathCount": 16,
+    "pages": [
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.api-reference.html",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.api-reference.txt",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.informacoes-adicionais.html",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.informacoes-adicionais.txt",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.visao-geral.html",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.openapi.json": "4bea83ddbf037cc33b6158826712a5359649a4528efc8ff2f2842b7bc00a9853",
+      "originais/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.postman.json": "1d2904cdeeb8709d8bd6823341b652314c24916e7ed924b6b671c7f92ec255f8",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.api-reference.html": "009581ba27257c61a0760a35f18b1d476a26db7de379fa289dccef788b84cdfe",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.api-reference.txt": "a803cce96538a993ddf993132693820f9304756b8c6505b5b4447abaf36b10ea",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.informacoes-adicionais.html": "9628883e23f953fc85cdbc3ecaf9f0700272dcb5ec383dbfdcbae76b05b5ec6b",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.informacoes-adicionais.txt": "32527877a1e4f4ce89b31a19e90ccc9bab0a414e96d0620523a67600120b226f",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.visao-geral.html": "253feeb16239e6fce5c38f453acfdef083c82fb088e160737fadef746d4f5e69",
+      "paginas/itau-ep9-gtw-pix-recebimentos-conciliacoes-v2-ext.visao-geral.txt": "7c4dff6b96fb3a88769abc59c8016fb1cedcc8358be70e5c35a87e894367ea14"
+    }
+  },
+  {
+    "slug": "itau-ep9-api-extrato-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-extrato-v1-externo",
+    "files": [
+      "originais/itau-ep9-api-extrato-v1-externo.openapi.json",
+      "originais/itau-ep9-api-extrato-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 4191,
+    "title": "API Boletos - Extrato Boleto Cobranca",
+    "additionalCharacters": 36266,
+    "version": "1.13.7",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/francesas"
+      },
+      {
+        "method": "GET",
+        "path": "/francesas/{francesaId}/movimentacoes"
+      },
+      {
+        "method": "GET",
+        "path": "/francesas/{francesaId}/movimentacoes-resumidas"
+      }
+    ],
+    "pathCount": 3,
+    "pages": [
+      "paginas/itau-ep9-api-extrato-v1-externo.api-reference.html",
+      "paginas/itau-ep9-api-extrato-v1-externo.api-reference.txt",
+      "paginas/itau-ep9-api-extrato-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-ep9-api-extrato-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-ep9-api-extrato-v1-externo.visao-geral.html",
+      "paginas/itau-ep9-api-extrato-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-api-extrato-v1-externo.openapi.json": "7ecccef9925e5cb41397325470030690e7e6fb0974b78614f9b71735f16ac2b0",
+      "originais/itau-ep9-api-extrato-v1-externo.postman.json": "c8ef764f12d6cc53e8318924ac2ad9ccfdd7a75396cbc8fda3aa93cd90cb7994",
+      "paginas/itau-ep9-api-extrato-v1-externo.api-reference.html": "b30019e1dbdfd4ff8260a27f0a2eb0895d077a416f8f6c54fc99b5a60066c508",
+      "paginas/itau-ep9-api-extrato-v1-externo.api-reference.txt": "51f6ad7a4788ed20cf7fe681fb4747e0692a313233c970157f680791b596bcc6",
+      "paginas/itau-ep9-api-extrato-v1-externo.informacoes-adicionais.html": "5d7b492e2d2b5ecb7fcb3c24754ba00dbc9343522a13648f5311c739ee8f1d26",
+      "paginas/itau-ep9-api-extrato-v1-externo.informacoes-adicionais.txt": "d82a0cfb7c13e385ae4946c461619cdd191b894c8340a91eba3170dfe86907d0",
+      "paginas/itau-ep9-api-extrato-v1-externo.visao-geral.html": "6cc635193c9f6ca3686c09724e0e83e06ddacb72bdd910a61ff5dc9fb7e866cf",
+      "paginas/itau-ep9-api-extrato-v1-externo.visao-geral.txt": "05fc0a62b238039062538c1a989ae067466bf7c86f61d540646a946c2483829c"
+    }
+  },
+  {
+    "slug": "itau-ng7-api-pixautomatico-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ng7-api-pixautomatico-v1-externo",
+    "files": [
+      "originais/itau-ng7-api-pixautomatico-v1-externo.openapi.json",
+      "originais/itau-ng7-api-pixautomatico-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 1736,
+    "title": "API Pixautomatico",
+    "additionalCharacters": 72113,
+    "version": "1.45.10",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "POST",
+        "path": "/locrec"
+      },
+      {
+        "method": "GET",
+        "path": "/locrec"
+      },
+      {
+        "method": "GET",
+        "path": "/locrec/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/locrec/{id}/idRec"
+      },
+      {
+        "method": "GET",
+        "path": "/token/rec/{recUrlAccessToken}"
+      },
+      {
+        "method": "PUT",
+        "path": "/webhookrec"
+      },
+      {
+        "method": "GET",
+        "path": "/webhookrec"
+      },
+      {
+        "method": "DELETE",
+        "path": "/webhookrec"
+      },
+      {
+        "method": "PUT",
+        "path": "/webhookcobr"
+      },
+      {
+        "method": "GET",
+        "path": "/webhookcobr"
+      },
+      {
+        "method": "DELETE",
+        "path": "/webhookcobr"
+      },
+      {
+        "method": "GET",
+        "path": "/rec/{idRec}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/rec/{idRec}"
+      },
+      {
+        "method": "GET",
+        "path": "/recorrencia/{idRec}/dados-pagador"
+      },
+      {
+        "method": "GET",
+        "path": "/rec"
+      },
+      {
+        "method": "POST",
+        "path": "/rec"
+      },
+      {
+        "method": "POST",
+        "path": "/solicrec"
+      },
+      {
+        "method": "GET",
+        "path": "/solicrec/{idSolicRec}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/solicrec/{idSolicRec}"
+      },
+      {
+        "method": "PUT",
+        "path": "/cobr/{txid}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cobr/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobr/{txid}"
+      },
+      {
+        "method": "POST",
+        "path": "/cobr"
+      },
+      {
+        "method": "GET",
+        "path": "/cobr"
+      },
+      {
+        "method": "POST",
+        "path": "/cobr/{txid}/retentativa/{data}"
+      }
+    ],
+    "pathCount": 14,
+    "pages": [
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.api-reference.html",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.api-reference.txt",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.visao-geral.html",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ng7-api-pixautomatico-v1-externo.openapi.json": "38d55e5eb31acbb8c3a0dc17df1a96c4937a34c2a6d55202c3c4aad503af263b",
+      "originais/itau-ng7-api-pixautomatico-v1-externo.postman.json": "1fccaffaced8369679d8d0cc57fbfa596aa79419e810dc6eb313d025a97ab594",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.api-reference.html": "ff7ee8dd89694748f4e477a95b74ea535240f5ca35909ef4c2ec3a6d72929e3b",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.api-reference.txt": "8ee2de2213a2772a8ef55a2dcb24c9541a70d1cd766ac88d7e2cab775ec23dc5",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.informacoes-adicionais.html": "0efbc3e56c51e013aa1e822d9cac6d8645a440d9cd4f4c816cda3950162a65e7",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.informacoes-adicionais.txt": "0e125e13895c458f2d8a75b2b07abcf61e4d058330a76df8eedbdd735505d6a5",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.visao-geral.html": "a2555478230d745a9af5934e7ee971beb96a63bc668a90c10b4d89e3f9bf8b3d",
+      "paginas/itau-ng7-api-pixautomatico-v1-externo.visao-geral.txt": "ce909bf139f897a51bc1b2448bda9ae3ba891ee967ec0f0327ecab0a4097fe54"
+    }
+  },
+  {
+    "slug": "itau-ep9-api-saque-troco-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-saque-troco-v1-externo",
+    "files": [
+      "originais/itau-ep9-api-saque-troco-v1-externo.openapi.json",
+      "originais/itau-ep9-api-saque-troco-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 2512,
+    "title": "Saque Troco",
+    "additionalCharacters": 4089,
+    "version": "1.0.7",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/pontos-atendimento"
+      },
+      {
+        "method": "POST",
+        "path": "/pontos-atendimento"
+      },
+      {
+        "method": "PATCH",
+        "path": "/pontos-atendimento/{pontoAtendimentoId}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/pontos-atendimento/{pontoAtendimentoId}"
+      },
+      {
+        "method": "GET",
+        "path": "/remuneracao-analiticos"
+      },
+      {
+        "method": "GET",
+        "path": "/remuneracao-consolidados"
+      }
+    ],
+    "pathCount": 4,
+    "pages": [
+      "paginas/itau-ep9-api-saque-troco-v1-externo.api-reference.html",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.api-reference.txt",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.visao-geral.html",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-api-saque-troco-v1-externo.openapi.json": "50d3b29e5f3feed58cc83ad5ce5411bf0055b312210008ed213685c27c5349c4",
+      "originais/itau-ep9-api-saque-troco-v1-externo.postman.json": "da292d0001fdf00763fdce9021c8e1361887f930f8ee85fbd0d43b1d00dd5591",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.api-reference.html": "cfffb051db4a176136eaca7f1f8152914b5ad881910aea39b6fd018d54e62afd",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.api-reference.txt": "1fa88e54072598202e10ba2dc3856d4e522b17b8b82773ec8cc7f5a6c6014d11",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.informacoes-adicionais.html": "02e32565d13b03ce1bfa5b7b6c8c105def047755b4df2819797018ded4b45928",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.informacoes-adicionais.txt": "ab9c52d648aa4467750ec98a27a7d71c94946367d1e36192492aac9ba5e421cd",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.visao-geral.html": "16bffc8103c958795efe3c6b015c97d105880691df8a4ba1d705852c82982331",
+      "paginas/itau-ep9-api-saque-troco-v1-externo.visao-geral.txt": "0044634fceb4ae4e23c6817303b4dfef3eaa3ac2cbef5a17d3806e4b6b41896a"
+    }
+  },
+  {
+    "slug": "itau-ep9-api-regulatorio-pix-v2-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-regulatorio-pix-v2-externo",
+    "files": [
+      "originais/itau-ep9-api-regulatorio-pix-v2-externo.openapi.json",
+      "originais/itau-ep9-api-regulatorio-pix-v2-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 16154,
+    "title": "Recebimentos Pix",
+    "additionalCharacters": 44355,
+    "version": "2.27.2",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "PUT",
+        "path": "/cob/{txid}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cob/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cob/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cob"
+      },
+      {
+        "method": "POST",
+        "path": "/cob"
+      },
+      {
+        "method": "GET",
+        "path": "/cob/{txid}/qrcode"
+      },
+      {
+        "method": "PUT",
+        "path": "/cobv/{txid}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/cobv/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobv/{txid}"
+      },
+      {
+        "method": "GET",
+        "path": "/cobv"
+      },
+      {
+        "method": "GET",
+        "path": "/cobv/{txid}/qrcode"
+      },
+      {
+        "method": "GET",
+        "path": "/loc"
+      },
+      {
+        "method": "POST",
+        "path": "/loc"
+      },
+      {
+        "method": "GET",
+        "path": "/loc/{id}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/loc/{id}/txid"
+      },
+      {
+        "method": "GET",
+        "path": "/pix"
+      },
+      {
+        "method": "GET",
+        "path": "/pix/{e2eid}"
+      },
+      {
+        "method": "GET",
+        "path": "/pix/{e2eid}/devolucao/{id}"
+      },
+      {
+        "method": "PUT",
+        "path": "/pix/{e2eid}/devolucao/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/qr/{pixUrlAccessToken}"
+      },
+      {
+        "method": "GET",
+        "path": "/qr/cobv/{pixUrlAccessToken}"
+      },
+      {
+        "method": "PUT",
+        "path": "/lotecobv/{id}"
+      },
+      {
+        "method": "PATCH",
+        "path": "/lotecobv/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/lotecobv/{id}"
+      },
+      {
+        "method": "GET",
+        "path": "/lotecobv"
+      },
+      {
+        "method": "GET",
+        "path": "/webhook"
+      },
+      {
+        "method": "GET",
+        "path": "/webhook/{chave}"
+      },
+      {
+        "method": "PUT",
+        "path": "/webhook/{chave}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/webhook/{chave}"
+      }
+    ],
+    "pathCount": 18,
+    "pages": [
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.api-reference.html",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.api-reference.txt",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.informacoes-adicionais.html",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.informacoes-adicionais.txt",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.visao-geral.html",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-api-regulatorio-pix-v2-externo.openapi.json": "1363eba41418ceb18520d391a6326b0a60b47db7da7e9d7cab2e1cf59f3926e2",
+      "originais/itau-ep9-api-regulatorio-pix-v2-externo.postman.json": "3eb6c08fe705dcbe9c48fb4d8b38af780c85b1c1d6454f506fe775a4cfc629ef",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.api-reference.html": "4cae9187f591182db03856ab312b116f0ca111a71e042f410968c43be521e4be",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.api-reference.txt": "e9b988a40bc4018abb23f19bc87e31636d72397531d7caa2187faa25e591a706",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.informacoes-adicionais.html": "437a36cb403e6ea7dbb7f313edc5b8eb65e7c099d9f840cbcc22d69aa73b34f4",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.informacoes-adicionais.txt": "6beda6b7e5e8ddc30208dfbb4ed2df2a61e5cf4b1850d8bbddff07b3c18786e6",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.visao-geral.html": "a25df5953b343cd1c1c273f46755c322f79ce3fde694461f4d2ab731804ecb0c",
+      "paginas/itau-ep9-api-regulatorio-pix-v2-externo.visao-geral.txt": "f9ad18cf84cd2103c8c9b7a94f7f0220db85fd4be4217f55ae24071add87161f"
+    }
+  },
+  {
+    "slug": "itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws",
+    "files": [
+      "originais/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.openapi.json",
+      "originais/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 3262,
+    "title": "API Boletos - Consulta de detalhe do Boleto",
+    "additionalCharacters": 12724,
+    "version": "1.3.0",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/boletos"
+      }
+    ],
+    "pathCount": 1,
+    "pages": [
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.api-reference.html",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.api-reference.txt",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.informacoes-adicionais.html",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.informacoes-adicionais.txt",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.visao-geral.html",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.openapi.json": "90845497caacc749240c77193b6fac343d7cd7fddcfd76cbe6769019f3f51703",
+      "originais/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.postman.json": "b6a3b9a41c15f3472181f9f0e598185a5f7f23276cd62df5eac30187a84af7be",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.api-reference.html": "7871ef6d430f80162965c2c9913e14620676269dc4bbc8653e2d21cdcf347cad",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.api-reference.txt": "793f90a4bf375c4e51d1baa44ff4b58a188eabbc6b1086b1497c2a5cff4eaa94",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.informacoes-adicionais.html": "be5a832e3e3f659334ff0ceb0fc476ea217166a78ca3ffccf1e3e0ee9bec22ab",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.informacoes-adicionais.txt": "7f257efa03198aa19159cbd294986f01d996dae23ca5dc7ee6fc3e360432316b",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.visao-geral.html": "daf38528d617a6b3c37bf00931b3bd3b1ff39544797d0b17848bad6e9e3298ec",
+      "paginas/itau-ep9-gtw-boletoscash-boletoscash-v2-ext-aws.visao-geral.txt": "92c8b390b77e500c85c04cb6f9a4129f0e1f417e38ed511c6bac397cbb539f3d"
+    }
+  },
+  {
+    "slug": "itau-ep9-gtw-cash-management-ext-v2",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-gtw-cash-management-ext-v2",
+    "files": [
+      "originais/itau-ep9-gtw-cash-management-ext-v2.openapi.json",
+      "originais/itau-ep9-gtw-cash-management-ext-v2.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 4293,
+    "title": "API Boletos - Emissão e Instrução",
+    "additionalCharacters": 191310,
+    "version": "2.75.150",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "POST",
+        "path": "/boletos"
+      },
+      {
+        "method": "GET",
+        "path": "/boletos"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/abatimento"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/baixa"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/data_vencimento"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/juros"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/multa"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/valor_nominal"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/data_limite_pagamento"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/seu_numero"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/protesto"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/negativacao"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/desconto"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/pagador"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/sacador_avalista"
+      },
+      {
+        "method": "PATCH",
+        "path": "/boletos/{id_boleto}/recebimento_divergente"
+      }
+    ],
+    "pathCount": 15,
+    "pages": [
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.api-reference.html",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.api-reference.txt",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.informacoes-adicionais.html",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.informacoes-adicionais.txt",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.visao-geral.html",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-gtw-cash-management-ext-v2.openapi.json": "d2c92610f753c325d4112254cbb33cce159d49d03cb18d6035ae7bacad974a30",
+      "originais/itau-ep9-gtw-cash-management-ext-v2.postman.json": "9f498427283e1cac113f8e79e6f40fea611f2bba7b5dd4beaf13f0d77259f10e",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.api-reference.html": "d67fb9e189265953cf99605014f070a32aecac0a780b16f457e0fd5d512ea23c",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.api-reference.txt": "8b74da913328b09495a7b9ec4470fafbad38551cc08bbd257c663cf04b4aa0ac",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.informacoes-adicionais.html": "7302b6d9d98672e524aa9bce126871412f8059ee6e7e5ba62a00cdbd3317fea1",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.informacoes-adicionais.txt": "8bfb23764e9e02184ea0fda3d4a34b310eddb864a5ec5c00dc310b08e9f71174",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.visao-geral.html": "71b3fe5a6546fc3615cd16f0158c64b30c347b5394eb907d8e28296350726873",
+      "paginas/itau-ep9-gtw-cash-management-ext-v2.visao-geral.txt": "484dcc8bf5a587c6babdedb9546cf8f9fbecafc42166ce7fddfbb491be6e14d5"
+    }
+  },
+  {
+    "slug": "itau-ep9-api-recebimentos-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-recebimentos-v1-externo",
+    "files": [
+      "originais/itau-ep9-api-recebimentos-v1-externo.openapi.json",
+      "originais/itau-ep9-api-recebimentos-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 11531,
+    "title": "Boleto com Pix",
+    "additionalCharacters": 35336,
+    "version": "1.0.7",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "POST",
+        "path": "/boletos-pix"
+      }
+    ],
+    "pathCount": 1,
+    "pages": [
+      "paginas/itau-ep9-api-recebimentos-v1-externo.api-reference.html",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.api-reference.txt",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.visao-geral.html",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-api-recebimentos-v1-externo.openapi.json": "135838413713a823bddbb32c489c647501d99af964d2faba368bf5f01beadb3f",
+      "originais/itau-ep9-api-recebimentos-v1-externo.postman.json": "f182410b246bc692d734ef28cf7e98f6fdff5510a6d4675fc116f607619989e1",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.api-reference.html": "c58ca26b3633fb1e4393771e926cac2aed75cb53fa7a5b29981f018ee6a9623f",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.api-reference.txt": "bde60d3269f0e667a3bd5af2a82bf31803bd7c57bb9a5b5bab1f4586c7a92d64",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.informacoes-adicionais.html": "d3c99f2a74424ca7f08b6ff1566e29a4b70332a62f1a7f5c11d2d85d46e047d4",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.informacoes-adicionais.txt": "ddb1f85c46885e67ec3d268944202a57bbbd0962275c99da46e5cd499aa5667e",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.visao-geral.html": "f6608409b54c29c34681267c587f2de6e2023d2f0dc3943d3ef831fef2422530",
+      "paginas/itau-ep9-api-recebimentos-v1-externo.visao-geral.txt": "e75786490454ff15b851c78c153c761f90c28268485f07a098bebc7851758055"
+    }
+  },
+  {
+    "slug": "itau-ep9-api-conciliacao-v1-externo",
+    "url": "https://devportal.itau.com.br/nossas-apis/itau-ep9-api-conciliacao-v1-externo",
+    "files": [
+      "originais/itau-ep9-api-conciliacao-v1-externo.openapi.json",
+      "originais/itau-ep9-api-conciliacao-v1-externo.postman.json"
+    ],
+    "errors": [],
+    "overviewCharacters": 5853,
+    "title": "Recebimentos Pix- API's Exclusivas",
+    "additionalCharacters": 9092,
+    "version": "1.20.7",
+    "captureDate": "2026-10-28",
+    "timezone": "America/Sao_Paulo",
+    "deprecatedCatalogEntry": false,
+    "operations": [
+      {
+        "method": "GET",
+        "path": "/lancamentos-pix"
+      },
+      {
+        "method": "GET",
+        "path": "/lancamentos-pix/{lancamentoPixId}"
+      }
+    ],
+    "pathCount": 2,
+    "pages": [
+      "paginas/itau-ep9-api-conciliacao-v1-externo.api-reference.html",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.api-reference.txt",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.informacoes-adicionais.html",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.informacoes-adicionais.txt",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.visao-geral.html",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.visao-geral.txt"
+    ],
+    "checksums": {
+      "originais/itau-ep9-api-conciliacao-v1-externo.openapi.json": "1f3e099c295d8ae7b9f13935e911cf1429f61831d7cf6e10510799a9847f0357",
+      "originais/itau-ep9-api-conciliacao-v1-externo.postman.json": "7aa118b48ff12107e4aa938b086ae1a701aa71c7bedc924013c95807e01d922a",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.api-reference.html": "f671029278a0fd3ef280c5da992dd5800c680162bfa25fc4a951ae662504a097",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.api-reference.txt": "35ab46c09a576ae78afd0ae346e070db5e19dbac4aec36e456b234141b3605e1",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.informacoes-adicionais.html": "4b7e320da396cae6282e221bb7f6916b13f010bde29ddf086e23b3cc41d2de7a",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.informacoes-adicionais.txt": "f05f71ad5f81fb9194910ddde8333e70444cab78616a4a067d9488dca4bb9a3b",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.visao-geral.html": "2623d17f56d1ef7d455ae8fabf7b7151e778aeb259ec3b8c373d738ec50dd1f3",
+      "paginas/itau-ep9-api-conciliacao-v1-externo.visao-geral.txt": "0830bae631b742d7178e6521888b5ec7e6e0acb40b7ec8b5c7f8c18aaf3cec1b"
+    }
+  }
+]
