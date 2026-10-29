@@ -37,7 +37,15 @@ namespace BancoBr.Tests.Sicoob
         [Fact]
         public void Conectar_BancoNaoImplementado_LancaException()
         {
-            Assert.Throws<System.Exception>(() => BancoApi.Conectar(new ConfiguracaoAPI { ClientId = "fake-client-id", CertificadoDigital = CriarCertificateSourceFake(), Correntista = new Correntista { Banco = (int)BancoEnum.BradescoSA } }, new FakeOAuthTokenProvider()));
+            Assert.Throws<System.Exception>(() => BancoApi.Conectar(new ConfiguracaoAPI { ClientId = "fake-client-id", CertificadoDigital = CriarCertificateSourceFake(), Correntista = new Correntista { Banco = (int)BancoEnum.Itau } }, new FakeOAuthTokenProvider()));
+        }
+
+        [Fact]
+        public void Conectar_BancoBradesco_RetornaBancoApiNosDoisFluxos()
+        {
+            var configuracao = new ConfiguracaoAPI { ClientId = "fake-client-id", CertificadoDigital = CriarCertificateSourceFake(), Correntista = new Correntista { Banco = (int)BancoEnum.BradescoSA } };
+            Assert.NotNull(BancoApi.Conectar(configuracao));
+            Assert.NotNull(BancoApi.Conectar(configuracao, new FakeOAuthTokenProvider()));
         }
     }
 }
